@@ -4,3 +4,7 @@
 # OS / editor cruft
 .DS_Store
 *.swp
+
+# Python build artifacts
+__pycache__/
+*.pyc
