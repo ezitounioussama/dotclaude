@@ -24,10 +24,10 @@ secrets from your `.env`.
 
 ## context7
 - **Transport:** HTTP to `https://mcp.context7.com/mcp`.
-- **Auth:** header `CONTEXT7_API_KEY`. Get a key at https://context7.com and put it in `.env`:
-  ```
-  CONTEXT7_API_KEY=ctx7sk-...
-  ```
+- **Auth:** header `CONTEXT7_API_KEY`, stored as a `${CONTEXT7_API_KEY}` **reference** —
+  Claude Code expands it from the shell environment at startup, so the real key never
+  lands in `~/.claude.json`. Get a key at https://context7.com, put it in `.env`, and
+  **export it in your shell** (e.g. `~/.bashrc`, or `set -a; source .env; set +a`).
 - **Use it for:** current docs for libraries/SDKs/CLIs (React, Next.js, Prisma, Tailwind, etc.) — prefer it over web search for library docs.
 
 ---
@@ -40,5 +40,7 @@ claude mcp remove <name> -s user     # remove
 ```
 
 ### Rotating the context7 key
-The key is **never** stored in this repo — only in your local `.env`. To rotate:
-edit `.env`, then re-run `./install.sh` (or `./install.sh` and it re-adds the server).
+The key is **never** stored in this repo *or* in any generated config — only in your
+local `.env`/shell environment. To rotate: get a new key, update `.env` and your shell
+export, then restart your AI tool. No re-install needed (configs reference the env var,
+not the value).

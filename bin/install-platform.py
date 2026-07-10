@@ -7,8 +7,13 @@ platforms. Called by install.sh, but usable standalone:
     python3 bin/install-platform.py codex gemini
     DRY_RUN=1 python3 bin/install-platform.py opencode   # preview only
 
-Secrets are read from the repo's .env (e.g. CONTEXT7_API_KEY). Existing platform
-config files are backed up (.bak-<timestamp>) before being merged, never clobbered.
+Secrets are NEVER written into the generated config files. context7 is wired to read
+CONTEXT7_API_KEY from the shell environment (opencode {env:VAR}, Gemini ${VAR}, Codex
+via env inheritance), so no plaintext key lands on disk. Export CONTEXT7_API_KEY in
+your shell (e.g. add it to ~/.bashrc, or `set -a; source .env`).
+
+Existing platform config files are backed up (.bak-<timestamp>) before merge, never
+clobbered.
 """
 import json
 import os
@@ -42,7 +47,11 @@ def load_env():
     return env
 
 ENV = load_env()
-CTX7 = ENV.get("CONTEXT7_API_KEY", os.environ.get("CONTEXT7_API_KEY", ""))
+# We do NOT bake the key into any config file. context7 reads CONTEXT7_API_KEY from
+# the environment at runtime; the config only references it. This flag is just used to
+# print a reminder if the key isn't available anywhere.
+HAVE_KEY = bool(ENV.get("CONTEXT7_API_KEY") or os.environ.get("CONTEXT7_API_KEY"))
+KEY_HINT = "export CONTEXT7_API_KEY in your shell (see .env) so context7 can authenticate"
 
 # ------------------------------------------------------------------ backup + write
 def backup(path: Path):
@@ -92,13 +101,14 @@ def install_opencode():
         "type": "remote",
         "url": "https://mcp.context7.com/mcp",
         "enabled": True,
-        "headers": {"CONTEXT7_API_KEY": CTX7},
+        # opencode interpolates {env:VAR} at load time — key stays out of the file
+        "headers": {"CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"},
     }
     write_json(cfg, data)
     ok(f"MCP (chrome-devtools, magicui, context7) -> {cfg}")
     copy_instructions(HOME / ".config" / "opencode" / "AGENTS.md")
-    if not CTX7:
-        warn("CONTEXT7_API_KEY empty — set it in .env for context7 to work")
+    if not HAVE_KEY:
+        warn(KEY_HINT)
 
 # ------------------------------------------------------------------ gemini
 def install_gemini():
@@ -111,14 +121,15 @@ def install_gemini():
     mcp["magicui"] = {"command": "npx", "args": ["-y", "@magicuidesign/mcp@latest"]}
     mcp["context7"] = {
         "httpUrl": "https://mcp.context7.com/mcp",
-        "headers": {"CONTEXT7_API_KEY": CTX7},
+        # Gemini substitutes ${VAR} from the environment — key stays out of the file
+        "headers": {"CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"},
         "timeout": 30000,
     }
     write_json(cfg, data)
     ok(f"MCP (chrome-devtools, magicui, context7) -> {cfg}")
     copy_instructions(HOME / ".gemini" / "GEMINI.md")
-    if not CTX7:
-        warn("CONTEXT7_API_KEY empty — set it in .env for context7 to work")
+    if not HAVE_KEY:
+        warn(KEY_HINT)
 
 # ------------------------------------------------------------------ codex
 def _codex(*args):
@@ -140,10 +151,10 @@ def install_codex():
     servers = [
         ("chrome-devtools", ["chrome-devtools-mcp"]),
         ("magicui", ["npx", "-y", "@magicuidesign/mcp@latest"]),
+        # context7 stdio: reads CONTEXT7_API_KEY from the inherited environment,
+        # so no key is written into ~/.codex/config.toml
+        ("context7", ["npx", "-y", "@upstash/context7-mcp"]),
     ]
-    # context7 as a stdio server (portable form; --api-key only if we have one)
-    ctx = ["npx", "-y", "@upstash/context7-mcp"] + (["--api-key", CTX7] if CTX7 else [])
-    servers.append(("context7", ctx))
     for name, cmd in servers:
         _codex("mcp", "remove", name)          # idempotent
         if _codex("mcp", "add", name, "--", *cmd):
@@ -151,8 +162,8 @@ def install_codex():
         else:
             warn(f"MCP: {name} failed (add manually: codex mcp add {name} -- {' '.join(cmd)})")
     copy_instructions(HOME / ".codex" / "AGENTS.md")
-    if not CTX7:
-        warn("CONTEXT7_API_KEY empty — set it in .env for context7 to work")
+    if not HAVE_KEY:
+        warn(KEY_HINT)
 
 # ------------------------------------------------------------------ main
 INSTALLERS = {"opencode": install_opencode, "codex": install_codex, "gemini": install_gemini}

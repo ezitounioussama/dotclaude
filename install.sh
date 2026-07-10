@@ -100,10 +100,11 @@ elif ! command -v jq >/dev/null 2>&1; then
   warn "jq not found — skipping MCP registration (needed to read servers.json)"
   note "MCP: install jq, then re-run"
 else
-  # substitute ${VARS} in the sanitized config with values from the environment
-  resolved="$(envsubst < "$REPO_DIR/mcp/servers.json" 2>/dev/null || sed "s#\${CONTEXT7_API_KEY}#${CONTEXT7_API_KEY:-}#g" "$REPO_DIR/mcp/servers.json")"
-  for name in $(printf '%s' "$resolved" | jq -r 'keys[]'); do
-    cfg="$(printf '%s' "$resolved" | jq -c --arg n "$name" '.[$n]')"
+  # Store the config with the literal ${CONTEXT7_API_KEY} reference — NOT the real
+  # key. Claude Code expands ${VARS} in headers/url/env from the shell environment
+  # at startup, so the secret never lands in ~/.claude.json.
+  for name in $(jq -r 'keys[]' "$REPO_DIR/mcp/servers.json"); do
+    cfg="$(jq -c --arg n "$name" '.[$n]' "$REPO_DIR/mcp/servers.json")"
     run claude mcp remove "$name" -s user >/dev/null 2>&1
     if [ "$DRY" = 1 ]; then
       skip "would add MCP: $name"
@@ -113,7 +114,7 @@ else
       warn "MCP: $name failed (add manually with: claude mcp add-json $name '<json>')"
     fi
   done
-  note "context7 needs a valid CONTEXT7_API_KEY in .env to work"
+  note "export CONTEXT7_API_KEY in your shell (see .env) — context7 reads it at startup"
 fi
 
 # ------------------------------------------------------------------ 3. plugins

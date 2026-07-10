@@ -33,18 +33,28 @@ All three MCP servers, in each tool's native schema:
 
 - **chrome-devtools** — stdio (`chrome-devtools-mcp`)
 - **magicui** — stdio (`npx -y @magicuidesign/mcp@latest`)
-- **context7** — HTTP with the `CONTEXT7_API_KEY` header on Claude/opencode/Gemini;
-  on Codex it's the portable stdio form (`npx -y @upstash/context7-mcp --api-key …`)
-  since Codex's remote transport expects bearer-token auth, not a custom header.
+- **context7** — HTTP with a `CONTEXT7_API_KEY` header on Claude/opencode/Gemini;
+  on Codex it's the portable stdio form (`npx -y @upstash/context7-mcp`) since Codex's
+  remote transport expects bearer-token auth, not a custom header.
 
 Plus the shared [`AGENTS.md`](AGENTS.md) instructions (Gemini reads the same content as
 `GEMINI.md`).
 
-## Secrets
+## Secrets — no key is ever written to disk
 
-Same as the rest of the repo: real keys live only in your local `.env` (git-ignored).
-The installer substitutes `${CONTEXT7_API_KEY}` at install time. Nothing secret is
-written to this repo.
+The installers do **not** put your Context7 key into any config file. Each generated
+config only *references* the environment variable:
+
+| Platform | How context7 gets the key |
+|---|---|
+| Claude Code | `${CONTEXT7_API_KEY}` in the header (expanded at startup) |
+| opencode | `{env:CONTEXT7_API_KEY}` in the header (opencode interpolation) |
+| Gemini CLI | `${CONTEXT7_API_KEY}` in the header (Gemini substitution) |
+| Codex CLI | stdio server inherits `CONTEXT7_API_KEY` from the environment |
+
+So you must **export `CONTEXT7_API_KEY` in your shell** for context7 to authenticate —
+add it to `~/.bashrc`/`~/.zshrc`, or `set -a; source .env; set +a`. Nothing secret is
+stored in the repo or in the generated configs.
 
 ## Notes / limitations
 
