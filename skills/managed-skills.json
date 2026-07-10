@@ -1,0 +1,59 @@
+{
+  "description": "External skill packages that are reinstalled from source (not vendored). The install script uses this manifest to fetch each source and recreate the skill symlinks under ~/.claude/skills.",
+  "packages": {
+    "gstack": {
+      "type": "gstack",
+      "repo": "https://github.com/garrytan/gstack.git",
+      "binary": "gstack",
+      "install_hint": "gstack ships its own installer and manages ~/.claude/skills/gstack + all gstack skill symlinks. Once the `gstack` binary is present, its skills self-register.",
+      "skills": [
+        "autoplan","benchmark","benchmark-models","browse","canary","careful","codex",
+        "connect-chrome","context-restore","context-save","cso","design-consultation",
+        "design-html","design-review","design-shotgun","devex-review","diagram",
+        "document-generate","document-release","freeze","_gstack-command","gstack-upgrade",
+        "guard","health","investigate","ios-clean","ios-design-review","ios-fix","ios-qa",
+        "ios-sync","land-and-deploy","landing-report","learn","make-pdf","office-hours",
+        "open-gstack-browser","pair-agent","plan-ceo-review","plan-design-review",
+        "plan-devex-review","plan-eng-review","plan-tune","qa","qa-only","retro","review",
+        "scrape","setup-browser-cookies","setup-deploy","setup-gbrain","ship","skillify",
+        "spec","sync-gbrain","unfreeze"
+      ]
+    },
+    "taste-skill": {
+      "type": "git-symlink",
+      "repo": "https://github.com/Leonxlnx/taste-skill.git",
+      "clone_to": "~/.local/share/opencode/taste-skill",
+      "install_hint": "Clone the repo, then symlink each installed skill name to the repo's SKILL.md.",
+      "skill_map": {
+        "brandkit": "skills/brandkit/SKILL.md",
+        "design-taste-frontend": "skills/taste-skill/SKILL.md",
+        "design-taste-frontend-v1": "skills/taste-skill-v1/SKILL.md",
+        "full-output-enforcement": "skills/output-skill/SKILL.md",
+        "gpt-taste": "skills/gpt-tasteskill/SKILL.md",
+        "high-end-visual-design": "skills/soft-skill/SKILL.md",
+        "imagegen-frontend-mobile": "skills/imagegen-frontend-mobile/SKILL.md",
+        "imagegen-frontend-web": "skills/imagegen-frontend-web/SKILL.md",
+        "image-to-code": "skills/image-to-code-skill/SKILL.md",
+        "industrial-brutalist-ui": "skills/brutalist-skill/SKILL.md",
+        "minimalist-ui": "skills/minimalist-skill/SKILL.md",
+        "redesign-existing-projects": "skills/redesign-skill/SKILL.md",
+        "stitch-design-taste": "skills/stitch-skill/SKILL.md"
+      }
+    },
+    "clerk": {
+      "type": "agents-symlink",
+      "source_dir": "~/.agents/skills",
+      "install_hint": "Clerk agent skills live in ~/.agents/skills and are installed via Clerk's agent toolkit (e.g. `npx @clerk/agent-toolkit@latest install` or the clerk CLI). Each installed name is symlinked from ~/.claude/skills/<name> -> ../../.agents/skills/<name>.",
+      "skills": [
+        "clerk-backend-api","clerk-custom-ui","clerk-nextjs-patterns","clerk-orgs",
+        "clerk-react-patterns","clerk-setup","clerk-testing","clerk-webhooks"
+      ]
+    },
+    "omarchy": {
+      "type": "system-symlink",
+      "source": "~/.local/share/omarchy/default/omarchy-skill",
+      "install_hint": "Provided by the Omarchy desktop install (~/.local/share/omarchy). Symlink ~/.claude/skills/omarchy -> that path.",
+      "skills": ["omarchy"]
+    }
+  }
+}

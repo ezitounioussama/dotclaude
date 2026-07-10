@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude mcp *)",
+      "mcp__context7__resolve-library-id",
+      "Bash(python3 *)",
+      "Skill(browse)",
+      "Bash(node *)",
+      "Bash(bash *)"
+    ]
+  }
+}
