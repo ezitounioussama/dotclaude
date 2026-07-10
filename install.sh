@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 #
-# One-click installer for this Claude Code configuration.
+# One-click installer for this AI coding config (Claude Code + other platforms).
 #
-#   ./install.sh                 # install everything
+#   ./install.sh                 # install the full Claude Code setup
 #   ./install.sh --skip-skills   # config + MCP + plugins only
 #   ./install.sh --skip-mcp      # skip MCP server registration
 #   ./install.sh --dry-run       # print what would happen, change nothing
 #
-# Safe to re-run. Existing ~/.claude config files are backed up before overwrite.
+# Other platforms (MCP servers + agent instructions):
+#   ./install.sh --opencode      # also set up opencode
+#   ./install.sh --codex         # also set up Codex CLI
+#   ./install.sh --gemini        # also set up Gemini CLI
+#   ./install.sh --all-platforms # Claude + opencode + codex + gemini
+#   ./install.sh --only=opencode,codex   # ONLY these platforms, skip Claude
+#
+# Safe to re-run. Existing config files are backed up before being changed.
 
 set -uo pipefail
 
@@ -18,12 +25,18 @@ SKILLS_DIR="$CLAUDE_DIR/skills"
 BACKUP_DIR="$CLAUDE_DIR/backups/config-restore-$(date +%Y%m%d-%H%M%S 2>/dev/null || echo manual)"
 
 DO_SKILLS=1; DO_MCP=1; DO_PLUGINS=1; DRY=0
+DO_CLAUDE=1; PLATFORMS=""
 for arg in "$@"; do
   case "$arg" in
     --skip-skills)  DO_SKILLS=0 ;;
     --skip-mcp)     DO_MCP=0 ;;
     --skip-plugins) DO_PLUGINS=0 ;;
     --dry-run)      DRY=1 ;;
+    --opencode)     PLATFORMS="$PLATFORMS opencode" ;;
+    --codex)        PLATFORMS="$PLATFORMS codex" ;;
+    --gemini)       PLATFORMS="$PLATFORMS gemini" ;;
+    --all-platforms) PLATFORMS="$PLATFORMS opencode codex gemini" ;;
+    --only=*)       DO_CLAUDE=0; PLATFORMS="$PLATFORMS $(echo "${arg#--only=}" | tr ',' ' ')" ;;
     -h|--help)      grep '^#' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "Unknown flag: $arg"; exit 1 ;;
   esac
@@ -53,6 +66,12 @@ else
   warn "no .env found — MCP secrets (e.g. CONTEXT7_API_KEY) will be blank"
   warn "copy .env.example to .env and fill it in for full functionality"
 fi
+
+# ================================================================== CLAUDE CODE
+if [ "$DO_CLAUDE" = 0 ]; then
+  say "Claude Code"
+  skip "skipped (--only=... requested other platforms)"
+else
 
 # ------------------------------------------------------------------ 1. config
 say "1/4  Config files"
@@ -183,6 +202,24 @@ else
   fi
 fi
 
+fi  # ================================================================ end CLAUDE
+
+# ============================================================= OTHER PLATFORMS
+PLATFORMS="$(echo "$PLATFORMS" | xargs 2>/dev/null || echo "$PLATFORMS")"
+if [ -n "$PLATFORMS" ]; then
+  say "Other platforms: $PLATFORMS"
+  if command -v python3 >/dev/null 2>&1; then
+    if [ "$DRY" = 1 ]; then
+      DRY_RUN=1 python3 "$REPO_DIR/bin/install-platform.py" $PLATFORMS
+    else
+      python3 "$REPO_DIR/bin/install-platform.py" $PLATFORMS
+    fi
+  else
+    warn "python3 not found — cannot configure other platforms"
+    note "install python3, then: python3 bin/install-platform.py $PLATFORMS"
+  fi
+fi
+
 # ------------------------------------------------------------------ done
 say "Done"
 if [ "${#SUMMARY[@]}" -gt 0 ]; then
@@ -190,4 +227,4 @@ if [ "${#SUMMARY[@]}" -gt 0 ]; then
   for s in "${SUMMARY[@]}"; do warn "$s"; done
 fi
 echo
-ok "Restart Claude Code (or run 'claude') to pick up config, MCP, and plugins."
+ok "Restart your AI tool(s) to pick up the new config, MCP servers, and instructions."
