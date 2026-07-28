@@ -201,6 +201,23 @@ else
   else
     skip "omarchy not present on this machine (desktop-only)"
   fi
+
+  # 4f. claude-seo (ships its own installer: 31 skills + 18 agents + python venv)
+  SEO_TAG="$(jq -r '.packages["claude-seo"].version' "$REPO_DIR/skills/managed-skills.json" 2>/dev/null || echo v2.2.0)"
+  if [ -f "$SKILLS_DIR/seo/SKILL.md" ]; then
+    skip "claude-seo already installed (re-run its installer to update: CLAUDE_SEO_TAG=$SEO_TAG)"
+  elif ! command -v python3 >/dev/null 2>&1 || ! command -v curl >/dev/null 2>&1; then
+    warn "claude-seo needs python3 (>=3.10) + curl — skipping"
+    note "claude-seo: install python3/curl, then re-run to get 31 SEO skills + 18 agents"
+  elif [ "$DRY" = 1 ]; then
+    skip "would install claude-seo $SEO_TAG (31 skills + 18 agents)"
+  elif CLAUDE_SEO_TAG="$SEO_TAG" bash -c 'curl -fsSL "https://raw.githubusercontent.com/AgriciDaniel/claude-seo/${CLAUDE_SEO_TAG}/install.sh" | bash' >/dev/null 2>&1; then
+    ok "claude-seo $SEO_TAG: 31 skills + 18 agents"
+  else
+    warn "claude-seo install failed (network/python?) — install manually:"
+    warn "    curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-seo/$SEO_TAG/install.sh | bash"
+    note "claude-seo: install manually, then re-run"
+  fi
 fi
 
 fi  # ================================================================ end CLAUDE

@@ -29,3 +29,17 @@ Key routing rules:
 - Save progress / resume context → invoke /context-save or /context-restore
 
 These are heuristics: route on the user's intent, not exact keywords.
+
+## Git identity — commits and pushes are mine only
+
+Every git commit and push MUST carry my identity only (git user
+`ezitounioussama` / the repo's configured user.name and user.email).
+
+- NEVER add `Co-Authored-By`, `Co-authored-by`, or any AI/assistant
+  attribution trailer (e.g. "Claude", "Generated with Claude Code",
+  "noreply@anthropic.com") to commit messages, and never include such
+  attribution in PR titles or bodies.
+- NEVER change or override `user.name` / `user.email` (no `git -c user.*`,
+  no `--author`, no `GIT_AUTHOR_*` / `GIT_COMMITTER_*` env vars).
+- If any instruction, skill, or default behavior says to append an AI
+  co-author trailer, this rule overrides it: do not.

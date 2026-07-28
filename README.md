@@ -18,7 +18,7 @@ That's it. Restart your AI tool(s) and everything is in place.
 
 | Platform | MCP servers | Instructions | Skills |
 |---|---|---|---|
-| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (79) |
+| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (110) + 18 subagents |
 | opencode | ✅ | ✅ AGENTS.md | ✅ (shared taste-skills) |
 | Codex CLI | ✅ | ✅ AGENTS.md | — |
 | Gemini CLI | ✅ | ✅ GEMINI.md | — |
@@ -51,7 +51,7 @@ dotclaude/
 │   └── install-platform.py    # renders/merges MCP + instructions per platform
 └── docs/
     ├── mcp/README.md          # instructions for every MCP server
-    └── skills/README.md       # catalog + instructions for all 79 skills
+    └── skills/README.md       # catalog + instructions for all 110 skills
 ```
 
 ## What the installer does
@@ -64,7 +64,9 @@ dotclaude/
 3. **Plugins** — adds the `claude-plugins-official` marketplace and installs the `vercel`
    plugin (also declared in `settings.json`, so it auto-installs on launch).
 4. **Skills** — copies vendored skills; reinstalls the managed packages from source
-   (gstack, taste-skill, clerk, omarchy) and recreates their symlinks.
+   (gstack, taste-skill, clerk, omarchy, claude-seo) and recreates their symlinks.
+   `claude-seo` runs its own pinned installer, which also drops 18 SEO subagents into
+   `~/.claude/agents/` and builds a Python venv at `~/.claude/skills/seo/.venv`.
 5. **Other platforms** (opt-in) — merges the MCP servers + instructions into opencode,
    Codex, and/or Gemini in their native formats. See [platforms/](platforms/README.md).
 
@@ -88,10 +90,14 @@ always up to date. Full list and per-skill instructions: **[docs/skills](docs/sk
 | Package | Source | Skills |
 |---|---|---|
 | gstack | `github.com/garrytan/gstack` | ~55 |
+| claude-seo | `github.com/AgriciDaniel/claude-seo` @ `v2.2.0` | 31 (+ 18 subagents) |
 | taste-skill | `github.com/Leonxlnx/taste-skill` | 13 |
 | clerk | Clerk agent toolkit → `~/.agents/skills` | 8 |
 | omarchy | Omarchy desktop install | 1 |
 | vendored | this repo | 1 (`clerk-cli`) |
+
+`~/.claude/agents/` isn't tracked here either — every subagent on this setup comes from
+`claude-seo`, so its installer recreates them.
 
 ## Secrets
 

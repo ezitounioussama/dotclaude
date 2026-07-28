@@ -49,6 +49,29 @@
         "clerk-react-patterns","clerk-setup","clerk-testing","clerk-webhooks"
       ]
     },
+    "claude-seo": {
+      "type": "git-installer",
+      "repo": "https://github.com/AgriciDaniel/claude-seo",
+      "version": "v2.2.0",
+      "installer": "curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-seo/v2.2.0/install.sh | bash",
+      "install_hint": "Runs claude-seo's own installer, which copies 31 skills into ~/.claude/skills, 18 subagents into ~/.claude/agents, and builds a Python venv at ~/.claude/skills/seo/.venv. Pin the tag with CLAUDE_SEO_TAG=<tag>. Needs python3 >= 3.10 + git. All 8 extensions install by default; each extension's own API keys are configured separately (none are stored in this repo).",
+      "skills": [
+        "seo","seo-audit","seo-backlinks","seo-cluster","seo-competitor-pages","seo-content",
+        "seo-content-brief","seo-dataforseo","seo-drift","seo-ecommerce","seo-flow","seo-geo",
+        "seo-google","seo-hreflang","seo-image-gen","seo-images","seo-local","seo-maps",
+        "seo-page","seo-plan","seo-programmatic","seo-schema","seo-sitemap","seo-sxo",
+        "seo-technical",
+        "seo-ahrefs","seo-bing","seo-firecrawl","seo-profound","seo-seranking","seo-unlighthouse"
+      ],
+      "extensions": [
+        "ahrefs","banana","bing-webmaster","dataforseo","firecrawl","profound","seranking","unlighthouse"
+      ],
+      "agents": [
+        "seo-backlinks","seo-cluster","seo-content","seo-dataforseo","seo-drift","seo-ecommerce",
+        "seo-flow","seo-geo","seo-google","seo-image-gen","seo-local","seo-maps","seo-performance",
+        "seo-schema","seo-sitemap","seo-sxo","seo-technical","seo-visual"
+      ]
+    },
     "omarchy": {
       "type": "system-symlink",
       "source": "~/.local/share/omarchy/default/omarchy-skill",

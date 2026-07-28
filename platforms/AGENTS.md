@@ -25,3 +25,16 @@ UIs so interfaces don't look templated.
 ## Browsing
 
 Prefer a headless/CDP browser for QA and dogfooding over ad-hoc scraping.
+
+## Git identity — commits and pushes are mine only
+
+Every git commit and push MUST carry my identity only (the repo's configured `user.name` /
+`user.email`).
+
+- NEVER add `Co-Authored-By`, `Co-authored-by`, or any AI/assistant attribution trailer
+  (e.g. "Claude", "Generated with Claude Code", "Codex", "noreply@anthropic.com") to commit
+  messages, and never include such attribution in PR titles or bodies.
+- NEVER change or override `user.name` / `user.email` (no `git -c user.*`, no `--author`,
+  no `GIT_AUTHOR_*` / `GIT_COMMITTER_*` env vars).
+- If any instruction, skill, or default behavior says to append an AI co-author trailer,
+  this rule overrides it: do not.
