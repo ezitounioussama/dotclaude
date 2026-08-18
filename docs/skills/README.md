@@ -1,6 +1,6 @@
 # Skills catalog
 
-114 skills across 6 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
+115 skills across 7 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
 of them by typing `/<skill-name>` in Claude Code, or Claude auto-invokes when your request
 matches.
 
@@ -10,6 +10,7 @@ matches.
 - **taste-skill** → cloned from `github.com/Leonxlnx/taste-skill`, symlinked in
 - **clerk** → Clerk agent toolkit into `~/.agents/skills`, symlinked in
 - **caveman** → Claude Code plugin from the `JuliusBrussee/caveman` marketplace
+- **graphify** → `uv tool install "graphifyy[mcp,sql,watch,ollama]"` + `graphify install --platform claude`
 - **omarchy** → symlink to the Omarchy desktop install
 - **vendored** → shipped inside this repo (`skills/vendored/`)
 
@@ -167,6 +168,24 @@ Installed as a Claude Code **plugin**, so these live in the plugin cache rather 
 
 > Only the MIT-licensed plugin is installed. The Caveman Engine/proxy (BSL-1.1), which
 > intercepts provider traffic, is **not** installed — see `skills/managed-skills.json`.
+
+---
+
+## graphify (code knowledge graph)
+
+Builds a queryable knowledge graph per project. Extraction is local tree-sitter (no API
+key, nothing leaves the machine); community labels come from a local ollama model.
+Pairs with the `graphify` MCP server (see [`../mcp`](../mcp/README.md)) which serves all
+indexed projects via `project_path`.
+
+| Skill | What it does |
+|---|---|
+| `/graphify` | Turn a folder (code, docs, PDFs, images) into a knowledge graph — `graph.json`, `graph.html`, `GRAPH_REPORT.md` — then query/path/explain over it instead of grepping. |
+
+Two `PreToolUse` hooks (`graphify hook-guard search|read`, declared in
+`config/settings.json`) nudge toward `graphify query` before raw searches. They are a
+~40ms no-op in directories with no `graphify-out/`. Note the **global** `graphify install`
+does not register hooks — only `--project` does — which is why this repo carries them.
 
 ---
 

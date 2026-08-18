@@ -202,7 +202,23 @@ else
     note "clerk: install Clerk agent toolkit, then re-run to link 8 skills"
   fi
 
-  # 4e. omarchy (system desktop install)
+  # 4e. graphify (PyPI CLI + skill + MCP; global install does not register hooks,
+  #      so config/settings.json carries the PreToolUse hook-guard entries)
+  if command -v uv >/dev/null 2>&1; then
+    run uv tool install "graphifyy[mcp,sql,watch]" >/dev/null 2>&1 \
+      && ok "graphify installed" \
+      || warn "graphify install failed (uv tool install graphifyy[mcp,sql,watch])"
+    if command -v graphify >/dev/null 2>&1 || [ -x "$HOME/.local/bin/graphify" ]; then
+      run "${HOME}/.local/bin/graphify" install --platform claude >/dev/null 2>&1 \
+        && ok "graphify: skill + CLAUDE.md registered" \
+        || warn "graphify skill registration failed"
+    fi
+  else
+    warn "uv not found — skipping graphify (install uv, then re-run)"
+    note "graphify: install uv (pacman -S uv), then re-run"
+  fi
+
+  # 4f. omarchy (system desktop install)
   OMARCHY="$HOME/.local/share/omarchy/default/omarchy-skill"
   if [ -e "$OMARCHY" ]; then
     run ln -sfn "$OMARCHY" "$SKILLS_DIR/omarchy" && ok "omarchy linked"
@@ -210,7 +226,7 @@ else
     skip "omarchy not present on this machine (desktop-only)"
   fi
 
-  # 4f. claude-seo (ships its own installer: 31 skills + 18 agents + python venv)
+  # 4g. claude-seo (ships its own installer: 31 skills + 18 agents + python venv)
   SEO_TAG="$(jq -r '.packages["claude-seo"].version' "$REPO_DIR/skills/managed-skills.json" 2>/dev/null || echo v2.2.0)"
   if [ -f "$SKILLS_DIR/seo/SKILL.md" ]; then
     skip "claude-seo already installed (re-run its installer to update: CLAUDE_SEO_TAG=$SEO_TAG)"

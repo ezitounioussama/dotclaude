@@ -18,7 +18,7 @@ That's it. Restart your AI tool(s) and everything is in place.
 
 | Platform | MCP servers | Instructions | Skills |
 |---|---|---|---|
-| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (114) + 21 subagents |
+| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (115) + 21 subagents |
 | opencode | ✅ | ✅ AGENTS.md | ✅ (shared taste-skills) |
 | Codex CLI | ✅ | ✅ AGENTS.md | — |
 | Gemini CLI | ✅ | ✅ GEMINI.md | — |
@@ -39,7 +39,7 @@ dotclaude/
 │   ├── settings.local.json    #   local permission allowlist
 │   └── statusline-command.sh  #   custom status line
 ├── mcp/
-│   └── servers.json           # 3 MCP servers (secrets as ${ENV_VARS})
+│   └── servers.json           # 4 MCP servers (secrets as ${ENV_VARS})
 ├── plugins/                   # marketplace + installed-plugin manifests
 ├── skills/
 │   ├── vendored/              # hand-written skills shipped in-repo (clerk-cli)
@@ -51,7 +51,7 @@ dotclaude/
 │   └── install-platform.py    # renders/merges MCP + instructions per platform
 └── docs/
     ├── mcp/README.md          # instructions for every MCP server
-    └── skills/README.md       # catalog + instructions for all 114 skills
+    └── skills/README.md       # catalog + instructions for all 115 skills
 ```
 
 ## What the installer does
@@ -94,6 +94,7 @@ always up to date. Full list and per-skill instructions: **[docs/skills](docs/sk
 | taste-skill | `github.com/Leonxlnx/taste-skill` | 13 |
 | clerk | Clerk agent toolkit → `~/.agents/skills` | 8 |
 | caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 4 (+ 3 Cavecrew subagents) |
+| graphify | `graphifyy` on PyPI (CLI + skill + MCP) | 1 |
 | omarchy | Omarchy desktop install | 1 |
 | vendored | this repo | 1 (`clerk-cli`) |
 

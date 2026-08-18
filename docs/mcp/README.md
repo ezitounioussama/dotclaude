@@ -44,3 +44,21 @@ The key is **never** stored in this repo *or* in any generated config — only i
 local `.env`/shell environment. To rotate: get a new key, update `.env` and your shell
 export, then restart your AI tool. No re-install needed (configs reference the env var,
 not the value).
+
+## graphify
+
+Local code knowledge graphs over the Intelcia projects under `~/Work`. Started with no
+default graph it runs as a **pure multi-project server**: every tool
+(`query_graph`, `get_node`, `get_neighbors`, `shortest_path`, `god_nodes`, …) takes an
+optional `project_path`, and the server keeps `GRAPHIFY_MAX_CONTEXTS` (24) graphs hot in
+an LRU. No API key — extraction is local tree-sitter and community labels come from a
+local ollama model, so client code never leaves the laptop.
+
+```bash
+graphify extract <repo> --code-only     # rebuild a project graph (free, local)
+graphify update <repo>                  # incremental refresh after code changes
+graphify query "<question>" --graph <repo>/graphify-out/graph.json
+```
+
+Each indexed repo has `graphify-out/` and `.graphifyignore` in its `.git/info/exclude`,
+so none of this shows up in the work repos' git status.

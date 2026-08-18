@@ -81,6 +81,15 @@
       "skills": ["caveman", "cavecrew", "caveman-compress", "caveman-stats"],
       "agents": ["cavecrew-builder", "cavecrew-investigator", "cavecrew-reviewer"]
     },
+    "graphify": {
+      "type": "pypi-cli",
+      "package": "graphifyy[mcp,sql,watch]",
+      "repo": "https://github.com/Graphify-Labs/graphify.git",
+      "install_hint": "uv tool install \"graphifyy[mcp,sql,watch]\" then `graphify install --platform claude` (writes ~/.claude/skills/graphify + a section in ~/.claude/CLAUDE.md). NOTE: the global installer does NOT register hooks \u2014 only `--project` does \u2014 so the PreToolUse hook-guard entries in config/settings.json are maintained here instead, which keeps them global without writing CLAUDE.md/.claude into every work repo. The sql extra is required or .sql files index as empty; watch enables `graphify watch` for auto-rebuild.",
+      "skills": ["graphify"],
+      "mcp": "graphify (see mcp/servers.json) \u2014 started with no default graph it runs as a pure multi-project server; every tool takes project_path.",
+      "indexed_projects": "17 Intelcia repos under ~/Work (GitLab intelcia-solutions + Azure DevOps PdpParagon/PDP). Each has graphify-out/ added to .git/info/exclude so it never shows in git status. Vendor-heavy repos carry a .graphifyignore."
+    },
     "omarchy": {
       "type": "system-symlink",
       "source": "~/.local/share/omarchy/default/omarchy-skill",

@@ -43,3 +43,7 @@ Every git commit and push MUST carry my identity only (git user
   no `--author`, no `GIT_AUTHOR_*` / `GIT_COMMITTER_*` env vars).
 - If any instruction, skill, or default behavior says to append an AI
   co-author trailer, this rule overrides it: do not.
+
+# graphify
+- **graphify** (`~/.claude/skills/graphify/SKILL.md`) - any input to knowledge graph. Trigger: `/graphify`
+When the user types `/graphify`, use the installed graphify skill or instructions before doing anything else.
