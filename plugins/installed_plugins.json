@@ -10,6 +10,16 @@
         "lastUpdated": "2026-06-12T20:35:03.601Z",
         "gitCommitSha": "6e51924cb249e2941de005d59f1ac6f768477b98"
       }
+    ],
+    "caveman@caveman": [
+      {
+        "scope": "user",
+        "installPath": "$HOME/.claude/plugins/cache/caveman/caveman/766dce6b1394",
+        "version": "766dce6b1394",
+        "installedAt": "2026-08-18T10:03:03.989Z",
+        "lastUpdated": "2026-08-18T10:03:03.989Z",
+        "gitCommitSha": "766dce6b1394ebb56a3090748d5a0240a5aefb36"
+      }
     ]
   }
 }

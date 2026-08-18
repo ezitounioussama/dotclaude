@@ -1,12 +1,18 @@
 {
   "permissions": {
     "allow": [
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/home/kirito/.claude.json'\\)\\); print\\('top-level mcpServers:', json.dumps\\(d.get\\('mcpServers',{}\\), indent=2\\)\\); print\\('projects with mcp:', [k for k,v in d.get\\('projects',{}\\).items\\(\\) if v.get\\('mcpServers'\\)]\\)\")",
       "Bash(claude mcp *)",
       "mcp__context7__resolve-library-id",
       "Bash(python3 *)",
       "Skill(browse)",
       "Bash(node *)",
-      "Bash(bash *)"
+      "Bash(echo \"JSON rows: $\\(node -e 'console.log\\(require\\(\"/home/kirito/survey-responses.json\"\\).length\\)'\\)\")",
+      "Bash(bash *)",
+      "Bash(awk -F'-> ' '{print $2}')",
+      "Bash(hyprctl reload *)",
+      "Bash(hyprctl configerrors *)",
+      "Bash(hyprctl monitors *)"
     ]
   }
 }

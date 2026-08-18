@@ -1,6 +1,6 @@
 # Skills catalog
 
-110 skills across 5 external packages + 1 vendored skill, plus 18 SEO subagents. Invoke any
+114 skills across 6 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
 of them by typing `/<skill-name>` in Claude Code, or Claude auto-invokes when your request
 matches.
 
@@ -9,6 +9,7 @@ matches.
 - **claude-seo** → its own pinned installer (`v2.2.0`), copies skills + `~/.claude/agents`
 - **taste-skill** → cloned from `github.com/Leonxlnx/taste-skill`, symlinked in
 - **clerk** → Clerk agent toolkit into `~/.agents/skills`, symlinked in
+- **caveman** → Claude Code plugin from the `JuliusBrussee/caveman` marketplace
 - **omarchy** → symlink to the Omarchy desktop install
 - **vendored** → shipped inside this repo (`skills/vendored/`)
 
@@ -150,6 +151,24 @@ directly): `seo-backlinks`, `seo-cluster`, `seo-content`, `seo-dataforseo`, `seo
 | `/clerk-react-patterns` | React SPA auth (Vite/CRA, hooks, protected routes). |
 | `/clerk-testing` | E2E auth-flow testing (Playwright/Cypress). |
 | `/clerk-webhooks` | Clerk webhooks for real-time events / data sync. |
+
+## caveman (token efficiency)
+
+Installed as a Claude Code **plugin**, so these live in the plugin cache rather than
+`~/.claude/skills/`. Ships 3 Cavecrew subagents (`cavecrew-builder`,
+`cavecrew-investigator`, `cavecrew-reviewer`).
+
+| Skill | What it does |
+|---|---|
+| `/caveman` | Ultra-compressed reply mode — cuts output tokens while keeping technical accuracy. Levels: `lite`, `full`, `ultra`, plus `wenyan-*`. Turn off with `/caveman off`. |
+| `/cavecrew` | Runs the Cavecrew agent presets (investigator / builder / reviewer). |
+| `/caveman-compress` | Compresses context/prompts before they cross the wire. |
+| `/caveman-stats` | Reports measured token savings. |
+
+> Only the MIT-licensed plugin is installed. The Caveman Engine/proxy (BSL-1.1), which
+> intercepts provider traffic, is **not** installed — see `skills/managed-skills.json`.
+
+---
 
 ## omarchy (Linux desktop)
 

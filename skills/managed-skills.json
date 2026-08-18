@@ -72,6 +72,15 @@
         "seo-schema","seo-sitemap","seo-sxo","seo-technical","seo-visual"
       ]
     },
+    "caveman": {
+      "type": "claude-plugin",
+      "repo": "https://github.com/JuliusBrussee/caveman.git",
+      "marketplace": "JuliusBrussee/caveman",
+      "plugin": "caveman@caveman",
+      "install_hint": "Official Claude Code path: `claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman`. Do NOT use the upstream curl|bash installer — it rewrites Claude Code hooks and the statusline, which would clobber statusline-command.sh. Skills ship inside the plugin (no ~/.claude/skills symlinks needed). skills/ upstream is MIT; the Caveman Engine/proxy is BSL-1.1 and is not installed by this path.",
+      "skills": ["caveman", "cavecrew", "caveman-compress", "caveman-stats"],
+      "agents": ["cavecrew-builder", "cavecrew-investigator", "cavecrew-reviewer"]
+    },
     "omarchy": {
       "type": "system-symlink",
       "source": "~/.local/share/omarchy/default/omarchy-skill",

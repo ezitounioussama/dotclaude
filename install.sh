@@ -131,6 +131,14 @@ else
     run claude plugin install vercel@claude-plugins-official >/dev/null 2>&1 \
       && ok "plugin: vercel" \
       || skip "vercel will auto-install from settings.json on next launch"
+    # caveman: official plugin path only. The upstream curl|bash installer also
+    # rewrites Claude Code hooks + statusline, which would clobber ours.
+    run claude plugin marketplace add JuliusBrussee/caveman >/dev/null 2>&1 \
+      && ok "marketplace: caveman" \
+      || warn "marketplace add via CLI failed (settings.json will handle it on launch)"
+    run claude plugin install caveman@caveman >/dev/null 2>&1 \
+      && ok "plugin: caveman" \
+      || skip "caveman will auto-install from settings.json on next launch"
   else
     skip "claude CLI absent — plugins auto-install from settings.json on launch"
   fi

@@ -6,5 +6,13 @@
     },
     "installLocation": "$HOME/.claude/plugins/marketplaces/claude-plugins-official",
     "lastUpdated": "2026-06-12T20:35:01.315Z"
+  },
+  "caveman": {
+    "source": {
+      "source": "github",
+      "repo": "JuliusBrussee/caveman"
+    },
+    "installLocation": "$HOME/.claude/plugins/marketplaces/caveman",
+    "lastUpdated": "2026-08-18T10:02:58.852Z"
   }
 }
