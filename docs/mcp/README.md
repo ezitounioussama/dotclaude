@@ -1,14 +1,15 @@
 # MCP servers
 
-Three MCP servers are configured (see [`../../mcp/servers.json`](../../mcp/servers.json)).
-The installer registers them at **user scope** with `claude mcp add-json`, substituting
-secrets from your `.env`.
+Four MCP servers are configured (see [`../../mcp/servers.json`](../../mcp/servers.json)).
+The installer registers them at **user scope** with `claude mcp add-json`, keeping secrets
+as `${ENV_VAR}` references that Claude Code expands from your shell at startup.
 
 | Server | Transport | Secret needed | Purpose |
 |---|---|---|---|
 | `chrome-devtools` | stdio | — | Drive a real Chrome via DevTools protocol (navigate, click, screenshot, network, performance/Lighthouse). |
 | `magicui` | stdio (npx) | — | Browse & fetch Magic UI component registry items for UI building. |
 | `context7` | http | `CONTEXT7_API_KEY` | Fetch up-to-date library/framework/API documentation on demand. |
+| `graphify` | stdio | — | Query local code knowledge graphs (nodes, neighbors, paths, god nodes, PR impact). |
 
 ---
 
@@ -47,12 +48,17 @@ not the value).
 
 ## graphify
 
-Local code knowledge graphs over the Intelcia projects under `~/Work`. Started with no
-default graph it runs as a **pure multi-project server**: every tool
-(`query_graph`, `get_node`, `get_neighbors`, `shortest_path`, `god_nodes`, …) takes an
-optional `project_path`, and the server keeps `GRAPHIFY_MAX_CONTEXTS` (24) graphs hot in
-an LRU. No API key — extraction is local tree-sitter and community labels come from a
-local ollama model, so client code never leaves the laptop.
+Local code knowledge graphs over the Intelcia projects under `~/Work`.
+
+- **Command:** `$HOME/.local/bin/graphify-mcp` (from `uv tool install "graphifyy[mcp,…]"`).
+- **Default graph:** `$HOME/.graphify/global-graph.json` — the cross-project graph built
+  by `graphify extract --global`. It is passed as the server's only positional argument,
+  so tools answer against it when no `project_path` is given.
+- **Multi-project:** every tool (`query_graph`, `get_node`, `get_neighbors`,
+  `shortest_path`, `god_nodes`, `get_pr_impact`, …) also takes an optional `project_path`,
+  and the server keeps `GRAPHIFY_MAX_CONTEXTS` (24) graphs hot in an LRU.
+- **No API key** — extraction is local tree-sitter and community labels come from a local
+  ollama model, so client code never leaves the laptop.
 
 ```bash
 graphify extract <repo> --code-only     # rebuild a project graph (free, local)

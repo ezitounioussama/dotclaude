@@ -1,6 +1,6 @@
 # Skills catalog
 
-115 skills across 7 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
+132 skills across 7 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
 of them by typing `/<skill-name>` in Claude Code, or Claude auto-invokes when your request
 matches.
 
@@ -155,16 +155,35 @@ directly): `seo-backlinks`, `seo-cluster`, `seo-content`, `seo-dataforseo`, `seo
 
 ## caveman (token efficiency)
 
-Installed as a Claude Code **plugin**, so these live in the plugin cache rather than
-`~/.claude/skills/`. Ships 3 Cavecrew subagents (`cavecrew-builder`,
-`cavecrew-investigator`, `cavecrew-reviewer`).
+Installed as a Claude Code **plugin**, so all 20 skills live in the plugin cache rather
+than `~/.claude/skills/` and are namespaced `caveman:<skill>` (they will not show up in
+`ls ~/.claude/skills`). Ships 3 Cavecrew subagents (`cavecrew-builder`,
+`cavecrew-investigator`, `cavecrew-reviewer`) and a SessionStart hook that keeps the
+compressed reply style active across sessions.
 
 | Skill | What it does |
 |---|---|
 | `/caveman` | Ultra-compressed reply mode — cuts output tokens while keeping technical accuracy. Levels: `lite`, `full`, `ultra`, plus `wenyan-*`. Turn off with `/caveman off`. |
-| `/cavecrew` | Runs the Cavecrew agent presets (investigator / builder / reviewer). |
+| `/caveman-setup` | First-run setup: installs the SessionStart hook and picks a default level. |
+| `/caveman-init` | Initializes caveman state for the current project. |
+| `/caveman-manage` | Enable/disable/inspect the installed caveman pieces. |
+| `/caveman-help` | Lists every caveman skill and what it does. |
 | `/caveman-compress` | Compresses context/prompts before they cross the wire. |
 | `/caveman-stats` | Reports measured token savings. |
+| `/caveman-optimize` | Suggests token-cutting changes to prompts/workflows. |
+| `/caveman-learn` | Records project conventions so later replies stay consistent. |
+| `/caveman-discover` | Surveys a codebase and reports what it found, compressed. |
+| `/caveman-explore` | Compressed exploration of a directory or subsystem. |
+| `/caveman-review` | One-line-per-finding code review. |
+| `/caveman-evidence-review` | Review that must cite file:line evidence for each claim. |
+| `/caveman-commit` | Writes a conventional commit message from the staged diff. |
+| `/cavecrew` | Runs the Cavecrew agent presets (investigator / builder / reviewer). |
+| `/investigate-first` | Forces investigation before any edit is proposed. |
+| `/lean-build` | Builds the smallest thing that satisfies the request — no scope creep. |
+| `/surgical-patch` | Bounded 1–2 file edit; refuses wider scope. |
+| `/safe-refactor` | Refactor with behavior-preservation checks. |
+| `/migration` | Staged migration plan with rollback points. |
+| `/verify-and-stop` | Verifies the change actually works, then stops instead of gold-plating. |
 
 > Only the MIT-licensed plugin is installed. The Caveman Engine/proxy (BSL-1.1), which
 > intercepts provider traffic, is **not** installed — see `skills/managed-skills.json`.
@@ -191,9 +210,13 @@ does not register hooks — only `--project` does — which is why this repo car
 
 ## omarchy (Linux desktop)
 
+Both are symlinks into the desktop install at
+`~/.local/share/omarchy/default/agents/skills/`, so they only exist on an Omarchy machine.
+
 | Skill | What it does |
 |---|---|
 | `/omarchy` | Customize Hyprland/Waybar/Walker/terminal/theme config on an Omarchy desktop. |
+| `/diagnose-crash` | Explain why a program crashed, from its `systemd-coredump` core dump (symbolized backtrace, upstream bug report). |
 
 ---
 

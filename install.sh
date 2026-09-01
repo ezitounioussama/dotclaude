@@ -218,10 +218,17 @@ else
     note "graphify: install uv (pacman -S uv), then re-run"
   fi
 
-  # 4f. omarchy (system desktop install)
-  OMARCHY="$HOME/.local/share/omarchy/default/omarchy-skill"
-  if [ -e "$OMARCHY" ]; then
-    run ln -sfn "$OMARCHY" "$SKILLS_DIR/omarchy" && ok "omarchy linked"
+  # 4f. omarchy (system desktop install: /omarchy + /diagnose-crash)
+  if [ -d "$HOME/.local/share/omarchy" ] && command -v jq >/dev/null 2>&1; then
+    while IFS=$'\t' read -r name src; do
+      [ -n "$name" ] || continue
+      src="${src/#\~/$HOME}"
+      if [ -e "$src" ]; then
+        run ln -sfn "$src" "$SKILLS_DIR/$name" && ok "omarchy skill: $name"
+      else
+        skip "omarchy skill $name not found at $src"
+      fi
+    done < <(jq -r '.packages.omarchy.source_map | to_entries[] | "\(.key)\t\(.value)"' "$REPO_DIR/skills/managed-skills.json")
   else
     skip "omarchy not present on this machine (desktop-only)"
   fi

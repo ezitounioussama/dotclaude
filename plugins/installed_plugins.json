@@ -4,10 +4,10 @@
     "vercel@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "$HOME/.claude/plugins/cache/claude-plugins-official/vercel/0.43.0",
-        "version": "0.43.0",
+        "installPath": "$HOME/.claude/plugins/cache/claude-plugins-official/vercel/0.45.1",
+        "version": "0.45.1",
         "installedAt": "2026-06-12T20:35:03.601Z",
-        "lastUpdated": "2026-06-12T20:35:03.601Z",
+        "lastUpdated": "2026-08-21T11:11:44.877Z",
         "gitCommitSha": "6e51924cb249e2941de005d59f1ac6f768477b98"
       }
     ],

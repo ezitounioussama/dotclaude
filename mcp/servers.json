@@ -25,7 +25,7 @@
     "type": "stdio",
     "command": "$HOME/.local/bin/graphify-mcp",
     "args": [
-      "$HOME/.graphify/global/graphify-out/graph.json"
+      "$HOME/.graphify/global-graph.json"
     ],
     "env": {
       "GRAPHIFY_MAX_CONTEXTS": "24"

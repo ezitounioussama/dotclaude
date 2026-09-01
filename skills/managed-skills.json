@@ -77,8 +77,14 @@
       "repo": "https://github.com/JuliusBrussee/caveman.git",
       "marketplace": "JuliusBrussee/caveman",
       "plugin": "caveman@caveman",
-      "install_hint": "Official Claude Code path: `claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman`. Do NOT use the upstream curl|bash installer — it rewrites Claude Code hooks and the statusline, which would clobber statusline-command.sh. Skills ship inside the plugin (no ~/.claude/skills symlinks needed). skills/ upstream is MIT; the Caveman Engine/proxy is BSL-1.1 and is not installed by this path.",
-      "skills": ["caveman", "cavecrew", "caveman-compress", "caveman-stats"],
+      "install_hint": "Official Claude Code path: `claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman`. Do NOT use the upstream curl|bash installer — it rewrites Claude Code hooks and the statusline, which would clobber statusline-command.sh. All 20 skills and 3 agents ship inside the plugin, namespaced `caveman:<skill>`, so they never appear in ~/.claude/skills. The plugin also registers its own SessionStart hook, which is what keeps the compressed reply style active across sessions. skills/ upstream is MIT; the Caveman Engine/proxy is BSL-1.1 and is not installed by this path.",
+      "skills": [
+        "caveman", "caveman-setup", "caveman-init", "caveman-manage", "caveman-help",
+        "caveman-compress", "caveman-stats", "caveman-optimize", "caveman-learn",
+        "caveman-discover", "caveman-explore", "caveman-review", "caveman-evidence-review",
+        "caveman-commit", "cavecrew", "investigate-first", "lean-build", "surgical-patch",
+        "safe-refactor", "migration", "verify-and-stop"
+      ],
       "agents": ["cavecrew-builder", "cavecrew-investigator", "cavecrew-reviewer"]
     },
     "graphify": {
@@ -92,9 +98,12 @@
     },
     "omarchy": {
       "type": "system-symlink",
-      "source": "~/.local/share/omarchy/default/omarchy-skill",
-      "install_hint": "Provided by the Omarchy desktop install (~/.local/share/omarchy). Symlink ~/.claude/skills/omarchy -> that path.",
-      "skills": ["omarchy"]
+      "install_hint": "Provided by the Omarchy desktop install (~/.local/share/omarchy). Symlink each skill name to its path in source_map; both live under default/agents/skills/ (upstream moved them there from default/omarchy-skill) and are absent on non-Omarchy machines.",
+      "source_map": {
+        "omarchy": "~/.local/share/omarchy/default/agents/skills/omarchy",
+        "diagnose-crash": "~/.local/share/omarchy/default/agents/skills/diagnose-crash"
+      },
+      "skills": ["omarchy", "diagnose-crash"]
     }
   }
 }

@@ -51,7 +51,7 @@ dotclaude/
 │   └── install-platform.py    # renders/merges MCP + instructions per platform
 └── docs/
     ├── mcp/README.md          # instructions for every MCP server
-    └── skills/README.md       # catalog + instructions for all 115 skills
+    └── skills/README.md       # catalog + instructions for all 132 skills
 ```
 
 ## What the installer does
@@ -59,12 +59,12 @@ dotclaude/
 1. **Config** — copies `CLAUDE.md`, `settings.json`, `settings.local.json`, and the
    status line into `~/.claude/` (backing up any existing versions), and rewrites
    machine-specific home paths to the current `$HOME`.
-2. **MCP** — registers `chrome-devtools`, `magicui`, and `context7` at user scope with
-   `claude mcp add-json`, injecting secrets from `.env`.
+2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, and `graphify` at user
+   scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}` references.
 3. **Plugins** — adds the `claude-plugins-official` marketplace and installs the `vercel`
    plugin (also declared in `settings.json`, so it auto-installs on launch).
 4. **Skills** — copies vendored skills; reinstalls the managed packages from source
-   (gstack, taste-skill, clerk, omarchy, claude-seo) and recreates their symlinks.
+   (gstack, taste-skill, clerk, graphify, omarchy, claude-seo) and recreates their symlinks.
    `claude-seo` runs its own pinned installer, which also drops 18 SEO subagents into
    `~/.claude/agents/` and builds a Python venv at `~/.claude/skills/seo/.venv`.
 5. **Other platforms** (opt-in) — merges the MCP servers + instructions into opencode,
@@ -93,9 +93,9 @@ always up to date. Full list and per-skill instructions: **[docs/skills](docs/sk
 | claude-seo | `github.com/AgriciDaniel/claude-seo` @ `v2.2.0` | 31 (+ 18 subagents) |
 | taste-skill | `github.com/Leonxlnx/taste-skill` | 13 |
 | clerk | Clerk agent toolkit → `~/.agents/skills` | 8 |
-| caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 4 (+ 3 Cavecrew subagents) |
+| caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 20 (+ 3 Cavecrew subagents) |
 | graphify | `graphifyy` on PyPI (CLI + skill + MCP) | 1 |
-| omarchy | Omarchy desktop install | 1 |
+| omarchy | Omarchy desktop install | 2 |
 | vendored | this repo | 1 (`clerk-cli`) |
 
 `~/.claude/agents/` isn't tracked here either — every subagent on this setup comes from
@@ -112,9 +112,23 @@ go in `.env` (git-ignored). Currently just `CONTEXT7_API_KEY` (get one at
 After changing your live setup, refresh the repo copies:
 
 ```bash
-cp ~/.claude/CLAUDE.md ~/.claude/settings.json ~/.claude/settings.local.json \
+cp ~/.claude/CLAUDE.md ~/.claude/settings.local.json \
    ~/.claude/statusline-command.sh config/    # then git commit
 ```
 
+`settings.json` is the one file to copy **by hand**, because the live version carries two
+things this repo deliberately does not:
+
+- **Absolute home paths** — hook and status-line commands are stored here as `$HOME/...`
+  so the config is portable; Claude Code rewrites them to `/home/<you>/...` on its side.
+- **`autoMode.environment`** — the machine- and repo-specific trust profile Claude Code
+  generates itself (org, remotes, branches, sensitive targets). It is regenerated per
+  machine and would leak internal infrastructure detail into git, so it stays untracked.
+
+The live `model` field is also left out: the model is a per-session choice, not part of
+the setup.
+
 For MCP changes, edit `mcp/servers.json` (keep secrets as `${VARS}`). To add a hand-written
-skill, drop it in `skills/vendored/<name>/`.
+skill, drop it in `skills/vendored/<name>/`. Plugin-provided skills (vercel, caveman) are
+not symlinked into `~/.claude/skills`, so only the plugin manifests need updating when
+they change version.

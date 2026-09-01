@@ -23,6 +23,8 @@
   },
   "effortLevel": "xhigh",
   "theme": "dark",
+  "skipDangerousModePermissionPrompt": true,
+  "preferredNotifChannel": "auto",
   "hooks": {
     "PreToolUse": [
       {
@@ -40,6 +42,18 @@
           {
             "type": "command",
             "command": "$HOME/.local/bin/graphify hook-guard read"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "_gstack_source": "gstack-timeline-stop",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/skills/gstack/hosts/claude/hooks/timeline-stop-hook",
+            "timeout": 5
           }
         ]
       }
