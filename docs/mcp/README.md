@@ -121,13 +121,20 @@ what suppresses the `/basic-memory:bm-setup` prompt — nothing here needs a sla
 ### Frontmatter that the brief actually reads
 
 The session brief queries `type: decision` with `status: open`, and `type: task` with
-`status: active`. Tags alone are not enough — a note written without `note_type` stays
-`type: note` and will never appear in a brief.
+`status: active`. Two traps:
+
+- A note written without `--type` stays `type: note` and never appears in a brief. Tags do
+  not substitute — `--tags decision` only fills `tags:`.
+- `write-note` has **no** `--status` flag, and a decision with no `status` is not `open`.
+  Put the frontmatter in the content instead: a `type:`/`status:` block inside the note's
+  own text takes precedence over the flags.
 
 ```bash
-basic-memory tool write-note --title "Why X" --folder decisions \
-  --note-type decision --content "..."
-basic-memory tool search-notes "query"        # query is positional
+printf -- '---\ntype: decision\nstatus: open\n---\n\nWhy we chose X.\n' |
+  basic-memory tool write-note --title "Why X" --folder decisions --type decision
+
+basic-memory tool search-notes "query"        # query is positional, and the flag is --tags
+basic-memory reindex                          # after editing frontmatter by hand
 basic-memory project list
 basic-memory hook status                      # inbox depth, settings, versions
 ```
