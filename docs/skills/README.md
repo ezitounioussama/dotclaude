@@ -1,8 +1,12 @@
 # Skills catalog
 
-132 skills across 7 external packages + 1 vendored skill, plus 18 SEO subagents + 3 Cavecrew subagents. Invoke any
-of them by typing `/<skill-name>` in Claude Code, or Claude auto-invokes when your request
-matches.
+123 skills catalogued across 7 external packages + 1 vendored skill, plus 18 SEO subagents
++ 3 Cavecrew subagents. A fresh install of this repo lands 112 of them as top-level entries
+in `~/.claude/skills` (the rest are nested inside gstack or shipped by a plugin).
+
+**Routing, not typing.** `CLAUDE.md` instructs Claude to invoke these on intent — describe
+the work and the right skill loads itself. `/<skill-name>` still works when you want to
+force one, but nothing in this setup requires it.
 
 **How they're installed** (see [`../../skills/managed-skills.json`](../../skills/managed-skills.json)):
 - **gstack** → provided by the `gstack` binary (self-registers)
@@ -10,7 +14,9 @@ matches.
 - **taste-skill** → cloned from `github.com/Leonxlnx/taste-skill`, symlinked in
 - **clerk** → Clerk agent toolkit into `~/.agents/skills`, symlinked in
 - **caveman** → Claude Code plugin from the `JuliusBrussee/caveman` marketplace
-- **graphify** → `uv tool install "graphifyy[mcp,sql,watch,ollama]"` + `graphify install --platform claude`
+- **graphify** → `uv tool install "graphifyy[mcp,sql,watch]"` + `graphify install --platform claude`
+  (no `ollama` extra: community labels are written by the `claude` binary, see
+  [docs/mcp](../mcp/README.md#graphify))
 - **omarchy** → symlink to the Omarchy desktop install
 - **vendored** → shipped inside this repo (`skills/vendored/`)
 
@@ -193,9 +199,13 @@ compressed reply style active across sessions.
 ## graphify (code knowledge graph)
 
 Builds a queryable knowledge graph per project. Extraction is local tree-sitter (no API
-key, nothing leaves the machine); community labels come from a local ollama model.
-Pairs with the `graphify` MCP server (see [`../mcp`](../mcp/README.md)) which serves all
-indexed projects via `project_path`.
+key, nothing leaves the machine); community labels are written by the `claude` binary
+(`graphify label <repo> --backend=claude-cli`), which runs on the existing subscription —
+no API key and no local model. Pairs with the `graphify` MCP server (see
+[`../mcp`](../mcp/README.md)) which serves all indexed projects via `project_path`.
+
+The skill is invoked on intent — a question about code structure, or new material to
+index — not only by typing `/graphify`.
 
 | Skill | What it does |
 |---|---|
@@ -223,3 +233,18 @@ Both are symlinks into the desktop install at
 ### Adding a new vendored skill to this repo
 Drop the skill folder (with its `SKILL.md`) into `skills/vendored/<name>/`, commit, and
 re-run `./install.sh` — it copies each vendored skill into `~/.claude/skills/`.
+
+---
+
+## Not skills, but routed the same way
+
+Two tools answer through MCP rather than as skills, and `CLAUDE.md` routes to them on
+intent exactly like the entries above:
+
+| Tool | Reach for it when | Reference |
+|---|---|---|
+| `graphify` | a question about a symbol, a caller, or what a change breaks | [docs/mcp](../mcp/README.md#graphify) |
+| `basic-memory` | recall, a past decision, "where did we leave off", or a decision worth keeping | [docs/mcp](../mcp/README.md#basic-memory) |
+
+Neither needs an API key or a local model. graphify labels with the `claude` binary;
+basic-memory searches with SQLite full-text and leaves the semantic step to the model.

@@ -29,13 +29,17 @@ DRY_RUN=1 python3 bin/install-platform.py gemini   # preview one
 
 ## What each platform gets
 
-All three MCP servers, in each tool's native schema:
+Three of the five MCP servers — the portable ones — in each tool's native schema:
 
 - **chrome-devtools** — stdio (`chrome-devtools-mcp`)
 - **magicui** — stdio (`npx -y @magicuidesign/mcp@latest`)
 - **context7** — HTTP with a `CONTEXT7_API_KEY` header on Claude/opencode/Gemini;
   on Codex it's the portable stdio form (`npx -y @upstash/context7-mcp`) since Codex's
   remote transport expects bearer-token auth, not a custom header.
+
+`graphify` and `basic-memory` are deliberately left out: both are local CLIs wired to
+Claude Code's own lifecycle hooks and settings, so they carry no meaning on a harness that
+cannot run those hooks. Register them by hand if another tool ever grows the equivalent.
 
 Plus the shared [`AGENTS.md`](AGENTS.md) instructions (Gemini reads the same content as
 `GEMINI.md`).

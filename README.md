@@ -18,7 +18,7 @@ That's it. Restart your AI tool(s) and everything is in place.
 
 | Platform | MCP servers | Instructions | Skills |
 |---|---|---|---|
-| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (115) + 21 subagents |
+| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (112) + 21 subagents |
 | opencode | ✅ | ✅ AGENTS.md | ✅ (shared taste-skills) |
 | Codex CLI | ✅ | ✅ AGENTS.md | — |
 | Gemini CLI | ✅ | ✅ GEMINI.md | — |
@@ -51,7 +51,7 @@ dotclaude/
 │   └── install-platform.py    # renders/merges MCP + instructions per platform
 └── docs/
     ├── mcp/README.md          # instructions for every MCP server
-    └── skills/README.md       # catalog + instructions for all 132 skills
+    └── skills/README.md       # catalog + instructions for all 123 skills
 ```
 
 ## What the installer does
@@ -97,6 +97,10 @@ a different kind of question, and `CLAUDE.md` routes between them without a slas
 | Knowledge | decisions, conventions, where we left off | basic-memory (Markdown + SQLite FTS, MCP) | free |
 | Project facts | per-repo notes already in context | `~/.claude/projects/<slug>/memory/` | free |
 
+The vault path defaults to `~/Documents/Obsidian Vault/Knowledge`; set `BASIC_MEMORY_VAULT`
+before running the installer to put it elsewhere. Full details in
+[docs/mcp](docs/mcp/README.md#basic-memory).
+
 Two rules hold this together:
 
 - **No local models and no paid retrieval.** graphify labels communities with the `claude`
@@ -116,17 +120,20 @@ always up to date. Full list and per-skill instructions: **[docs/skills](docs/sk
 
 | Package | Source | Skills |
 |---|---|---|
-| gstack | `github.com/garrytan/gstack` | ~55 |
+| gstack | `github.com/garrytan/gstack` | ~55 (46 catalogued) |
 | claude-seo | `github.com/AgriciDaniel/claude-seo` @ `v2.2.0` | 31 (+ 18 subagents) |
 | taste-skill | `github.com/Leonxlnx/taste-skill` | 13 |
 | clerk | Clerk agent toolkit → `~/.agents/skills` | 8 |
-| caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 20 (+ 3 Cavecrew subagents) |
+| caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 21 (+ 3 Cavecrew subagents) |
 | graphify | `graphifyy` on PyPI (CLI + skill + MCP) | 1 |
 | omarchy | Omarchy desktop install | 2 |
 | vendored | this repo | 1 (`clerk-cli`) |
 
 `~/.claude/agents/` isn't tracked here either — every subagent on this setup comes from
 `claude-seo`, so its installer recreates them.
+
+The counts above are what each source ships; [docs/skills](docs/skills/README.md) is the
+source of truth and documents 123 of them one by one.
 
 ## Secrets
 
