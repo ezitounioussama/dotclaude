@@ -39,7 +39,7 @@ dotclaude/
 │   ├── settings.local.json    #   local permission allowlist
 │   └── statusline-command.sh  #   custom status line
 ├── mcp/
-│   └── servers.json           # 4 MCP servers (secrets as ${ENV_VARS})
+│   └── servers.json           # 5 MCP servers (secrets as ${ENV_VARS})
 ├── plugins/                   # marketplace + installed-plugin manifests
 ├── skills/
 │   ├── vendored/              # hand-written skills shipped in-repo (clerk-cli)
@@ -59,15 +59,20 @@ dotclaude/
 1. **Config** — copies `CLAUDE.md`, `settings.json`, `settings.local.json`, and the
    status line into `~/.claude/` (backing up any existing versions), and rewrites
    machine-specific home paths to the current `$HOME`.
-2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, and `graphify` at user
-   scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}` references.
+2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, `graphify`, and
+   `basic-memory` at user scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}`
+   references.
 3. **Plugins** — adds the `claude-plugins-official` marketplace and installs the `vercel`
    plugin (also declared in `settings.json`, so it auto-installs on launch).
 4. **Skills** — copies vendored skills; reinstalls the managed packages from source
    (gstack, taste-skill, clerk, graphify, omarchy, claude-seo) and recreates their symlinks.
    `claude-seo` runs its own pinned installer, which also drops 18 SEO subagents into
    `~/.claude/agents/` and builds a Python venv at `~/.claude/skills/seo/.venv`.
-5. **Other platforms** (opt-in) — merges the MCP servers + instructions into opencode,
+5. **Memory** — installs `basic-memory`, registers the `knowledge` project at
+   `~/Documents/Obsidian Vault/Knowledge`, and forces text-only search so nothing pulls a
+   local embedding model. The lifecycle hooks come from `settings.json`, not from
+   `basic-memory hook install`.
+6. **Other platforms** (opt-in) — merges the MCP servers + instructions into opencode,
    Codex, and/or Gemini in their native formats. See [platforms/](platforms/README.md).
 
 Each step is **best-effort and skippable** — if a source needs network, auth, or a tool
@@ -80,6 +85,28 @@ that's missing, the installer warns and prints a follow-up instead of failing.
 ./install.sh --all-platforms     # also set up opencode + Codex + Gemini
 ./install.sh --only=opencode     # ONLY opencode (skip Claude Code)
 ```
+
+## Memory — three layers, nothing paid, nothing local
+
+Knowledge lives outside the context window and is queried, never reloaded. Each layer owns
+a different kind of question, and `CLAUDE.md` routes between them without a slash command.
+
+| Layer | Owns | Backend | Cost |
+|---|---|---|---|
+| Code structure | symbols, call paths, blast radius | graphify (CLI + MCP, local tree-sitter) | free |
+| Knowledge | decisions, conventions, where we left off | basic-memory (Markdown + SQLite FTS, MCP) | free |
+| Project facts | per-repo notes already in context | `~/.claude/projects/<slug>/memory/` | free |
+
+Two rules hold this together:
+
+- **No local models and no paid retrieval.** graphify labels communities with the `claude`
+  binary on the existing subscription; basic-memory runs with semantic search disabled, so
+  search is SQLite full-text and the semantic step is Claude's own reading. `CLAUDE.md`
+  states this so a later session does not silently turn embeddings back on.
+- **A CLI costs nothing until it is called.** MCP tool definitions are re-sent on every
+  request, so a server is only worth registering when the agent must reach it unprompted.
+  basic-memory's 21 tools are about 11k tokens if loaded eagerly; Claude Code defers the
+  schemas until one is used, which is what makes it affordable.
 
 ## Skills — reinstalled, not vendored
 
@@ -121,6 +148,8 @@ things this repo deliberately does not:
 
 - **Absolute home paths** — hook and status-line commands are stored here as `$HOME/...`
   so the config is portable; Claude Code rewrites them to `/home/<you>/...` on its side.
+  This applies to the graphify `PreToolUse` guards, the gstack `Stop` hook, and the
+  basic-memory `SessionStart` / `PreCompact` hooks alike.
 - **`autoMode.environment`** — the machine- and repo-specific trust profile Claude Code
   generates itself (org, remotes, branches, sensitive targets). It is regenerated per
   machine and would leak internal infrastructure detail into git, so it stays untracked.

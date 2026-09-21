@@ -57,6 +57,35 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.local/bin/basic-memory hook session-start --harness claude",
+            "timeout": 20
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.local/bin/basic-memory hook pre-compact --harness claude",
+            "timeout": 120
+          }
+        ]
+      }
     ]
+  },
+  "basicMemory": {
+    "primaryProject": "knowledge",
+    "captureEvents": true,
+    "captureFolder": "sessions",
+    "recallTimeframe": "14d",
+    "checkpointOnCompact": true
   }
 }

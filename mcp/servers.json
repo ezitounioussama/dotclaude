@@ -30,5 +30,15 @@
     "env": {
       "GRAPHIFY_MAX_CONTEXTS": "24"
     }
+  },
+  "basic-memory": {
+    "type": "stdio",
+    "command": "$HOME/.local/bin/basic-memory",
+    "args": [
+      "mcp"
+    ],
+    "env": {
+      "BASIC_MEMORY_DEFAULT_PROJECT": "knowledge"
+    }
   }
 }

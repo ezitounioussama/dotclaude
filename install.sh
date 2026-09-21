@@ -74,7 +74,7 @@ if [ "$DO_CLAUDE" = 0 ]; then
 else
 
 # ------------------------------------------------------------------ 1. config
-say "1/4  Config files"
+say "1/5  Config files"
 mkdir -p "$CLAUDE_DIR"
 for f in CLAUDE.md settings.json settings.local.json statusline-command.sh; do
   src="$REPO_DIR/config/$f"; dst="$CLAUDE_DIR/$f"
@@ -90,7 +90,7 @@ done
 [ -d "$BACKUP_DIR" ] && note "previous config backed up to $BACKUP_DIR"
 
 # ------------------------------------------------------------------ 2. MCP
-say "2/4  MCP servers"
+say "2/5  MCP servers"
 if [ "$DO_MCP" = 0 ]; then
   skip "skipped (--skip-mcp)"
 elif ! command -v claude >/dev/null 2>&1; then
@@ -118,7 +118,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 3. plugins
-say "3/4  Plugins (marketplace)"
+say "3/5  Plugins (marketplace)"
 if [ "$DO_PLUGINS" = 0 ]; then
   skip "skipped (--skip-plugins)"
 else
@@ -145,7 +145,7 @@ else
 fi
 
 # ------------------------------------------------------------------ 4. skills
-say "4/4  Skills"
+say "4/5  Skills"
 if [ "$DO_SKILLS" = 0 ]; then
   skip "skipped (--skip-skills)"
 else
@@ -248,6 +248,49 @@ else
     warn "claude-seo install failed (network/python?) — install manually:"
     warn "    curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-seo/$SEO_TAG/install.sh | bash"
     note "claude-seo: install manually, then re-run"
+  fi
+fi
+
+# ------------------------------------------------------------------ 5. memory
+say "5/5  Memory backend (basic-memory)"
+BM_VAULT="${BASIC_MEMORY_VAULT:-$HOME/Documents/Obsidian Vault/Knowledge}"
+BM_CONFIG_DIR="${BASIC_MEMORY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/basic-memory}"
+BM_BIN="$HOME/.local/bin/basic-memory"
+if ! command -v uv >/dev/null 2>&1; then
+  warn "uv not found — skipping basic-memory (install uv, then re-run)"
+  note "basic-memory: install uv (pacman -S uv), then re-run"
+else
+  run uv tool install basic-memory >/dev/null 2>&1 \
+    && ok "basic-memory installed" \
+    || warn "basic-memory install failed (uv tool install basic-memory)"
+  run mkdir -p "$BM_VAULT" "$BM_CONFIG_DIR"
+  if [ "$DRY" = 1 ]; then
+    skip "would register project 'knowledge' at $BM_VAULT and disable semantic search"
+  elif [ -x "$BM_BIN" ]; then
+    "$BM_BIN" project add knowledge "$BM_VAULT" >/dev/null 2>&1 \
+      && ok "project: knowledge ($BM_VAULT)" \
+      || skip "project 'knowledge' already registered"
+    # Force text-only retrieval. basic-memory ships fastembed + onnxruntime and turns
+    # semantic search on by default, which downloads a local embedding model on first
+    # use. This setup runs on the Claude subscription alone, so keep it off.
+    BM_CONFIG_FILE="$BM_CONFIG_DIR/config.json" python3 - <<'PYEOF'
+import json, os, pathlib
+p = pathlib.Path(os.environ["BM_CONFIG_FILE"])
+cfg = json.loads(p.read_text()) if p.exists() else {}
+cfg.update({
+    "default_project": "knowledge",
+    "default_project_mode": True,
+    "semantic_search_enabled": False,
+    "default_search_type": "text",
+    "reranker_enabled": False,
+})
+p.write_text(json.dumps(cfg, indent=2) + "\n")
+p.chmod(0o600)
+PYEOF
+    ok "semantic search off — text search only, no local model"
+    note "basic-memory lifecycle hooks ship in config/settings.json (SessionStart + PreCompact)"
+  else
+    warn "basic-memory binary not at $BM_BIN — configure it manually"
   fi
 fi
 
