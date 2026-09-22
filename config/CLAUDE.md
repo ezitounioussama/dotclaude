@@ -1,11 +1,8 @@
 ## gstack
-Use /browse from gstack for all web browsing. Never use mcp__claude-in-chrome__* tools.
-Available skills: /office-hours, /plan-ceo-review, /plan-eng-review, /plan-design-review,
-/design-consultation, /design-shotgun, /design-html, /review, /ship, /land-and-deploy,
-/canary, /benchmark, /browse, /open-gstack-browser, /qa, /qa-only, /design-review,
-/setup-browser-cookies, /setup-deploy, /setup-gbrain, /sync-gbrain, /retro, /investigate,
-/document-release, /document-generate, /codex, /cso, /autoplan, /pair-agent, /careful,
-/freeze, /guard, /unfreeze, /gstack-upgrade, /learn.
+Use /browse from gstack for all web browsing. Never use mcp__claude-in-chrome__* or
+mcp__chrome-devtools__* to browse — chrome-devtools is for performance traces, network
+inspection and Lighthouse only. The harness injects the full skill listing every session,
+so route from it rather than from a list written here.
 
 ## Skill routing
 
@@ -63,9 +60,10 @@ question instead of re-reading files or re-deriving what was already settled.
   `~/Documents/Obsidian Vault/Knowledge`). Search it before answering "what did
   we decide", "why is it like this", "where were we". Write a note the moment a
   material decision is made, one fact per note, `type: decision` for decisions.
-- **Per-project facts already in context** → the `memory/` directory of the
-  current project. It is loaded at session start; do not duplicate it into
-  basic-memory.
+- **Per-project facts already in context** → the harness auto-memory at
+  `~/.claude/projects/<slug>/memory/`, indexed by its `MEMORY.md`. It is already
+  in context at session start: never re-read it, never duplicate it into
+  basic-memory, and never create a `memory/` folder inside a work repo.
 
 Nothing here calls a local model or a third-party API. Search is full text only;
 the semantic step is mine. Do not enable embeddings, install ollama models, or
@@ -83,5 +81,13 @@ being asked. The gstack table above lists the common ones; these extend it:
 - A decision, a constraint, a gotcha the user states → write it to basic-memory
   in the same turn, without asking.
 
-Skills and MCP tools are loaded on demand. Prefer a command-line tool over
-standing up an MCP server: a CLI costs nothing until it is called.
+Skills and MCP tools are loaded on demand. When choosing how to reach a tool,
+prefer a command line for one-off work: a CLI costs nothing until it is called.
+graphify and basic-memory are the deliberate exceptions — their MCP tools are
+deferred too, so use `mcp__graphify__*` and `mcp__basic-memory__*` rather than
+shelling out, and keep the two paths from producing different answers.
+
+Project-scoped skills win over global ones with the same job. In
+`~/Work/paragon`, code review is `/revue` and never gstack `/review`: `/revue`
+records the reviewed commit, and `tools/pr-create.py` refuses to open a PR
+without that record.

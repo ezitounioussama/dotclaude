@@ -56,9 +56,11 @@ dotclaude/
 
 ## What the installer does
 
-1. **Config** — copies `CLAUDE.md`, `settings.json`, `settings.local.json`, and the
-   status line into `~/.claude/` (backing up any existing versions), and rewrites
-   machine-specific home paths to the current `$HOME`.
+1. **Config** — copies `CLAUDE.md`, `settings.local.json`, and the status line into
+   `~/.claude/` (backing up any existing versions). `settings.json` is **merged**, not
+   copied: the repo's keys win, and the machine-generated ones Claude Code owns
+   (`autoMode`, `modelSettings`, `model`, the notification flags) are grafted back from
+   the live file so a re-run does not wipe them.
 2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, `graphify`, and
    `basic-memory` at user scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}`
    references.
@@ -154,9 +156,12 @@ cp ~/.claude/CLAUDE.md ~/.claude/settings.local.json \
 things this repo deliberately does not:
 
 - **Absolute home paths** — hook and status-line commands are stored here as `$HOME/...`
-  so the config is portable; Claude Code rewrites them to `/home/<you>/...` on its side.
-  This applies to the graphify `PreToolUse` guards, the gstack `Stop` hook, and the
-  basic-memory `SessionStart` / `PreCompact` hooks alike.
+  because hook commands run through a shell, which expands them. This applies to the
+  graphify `PreToolUse` guards, the gstack `Stop` hook, and the basic-memory
+  `SessionStart` / `PreCompact` hooks alike. **MCP `command` fields are different**: they
+  are `posix_spawn`'d, not shell-run, so `mcp/servers.json` uses the braced `${HOME}`
+  form, which Claude Code does expand. A bare `$HOME` there registers without error and
+  then fails with `ENOENT` on every session.
 - **`autoMode.environment`** — the machine- and repo-specific trust profile Claude Code
   generates itself (org, remotes, branches, sensitive targets). It is regenerated per
   machine and would leak internal infrastructure detail into git, so it stays untracked.

@@ -23,9 +23,9 @@
   },
   "graphify": {
     "type": "stdio",
-    "command": "$HOME/.local/bin/graphify-mcp",
+    "command": "${HOME}/.local/bin/graphify-mcp",
     "args": [
-      "$HOME/.graphify/global-graph.json"
+      "${HOME}/.graphify/global-graph.json"
     ],
     "env": {
       "GRAPHIFY_MAX_CONTEXTS": "24"
@@ -33,12 +33,15 @@
   },
   "basic-memory": {
     "type": "stdio",
-    "command": "$HOME/.local/bin/basic-memory",
+    "command": "${HOME}/.local/bin/basic-memory",
     "args": [
       "mcp"
     ],
     "env": {
-      "BASIC_MEMORY_DEFAULT_PROJECT": "knowledge"
+      "BASIC_MEMORY_DEFAULT_PROJECT": "knowledge",
+      "BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED": "false",
+      "BASIC_MEMORY_RERANKER_ENABLED": "false",
+      "BASIC_MEMORY_DEFAULT_SEARCH_TYPE": "text"
     }
   }
 }

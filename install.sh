@@ -76,12 +76,35 @@ else
 # ------------------------------------------------------------------ 1. config
 say "1/5  Config files"
 mkdir -p "$CLAUDE_DIR"
+# Keys Claude Code generates per machine. The repo deliberately does not track them,
+# so a plain copy would delete them on every re-run — graft them back after merging.
+KEEP_KEYS='autoMode modelSettings model inputNeededNotifEnabled agentPushNotifEnabled'
+
 for f in CLAUDE.md settings.json settings.local.json statusline-command.sh; do
   src="$REPO_DIR/config/$f"; dst="$CLAUDE_DIR/$f"
   [ -f "$src" ] || { skip "$f (not in repo)"; continue; }
   if [ -f "$dst" ]; then
     run mkdir -p "$BACKUP_DIR"
     run cp "$dst" "$BACKUP_DIR/$f"
+  fi
+  if [ "$f" = "settings.json" ] && [ -f "$dst" ] && [ "$DRY" != 1 ] && command -v python3 >/dev/null 2>&1; then
+    SRC="$src" DST="$dst" KEEP="$KEEP_KEYS" python3 - <<'PYEOF'
+import json, os
+src, dst = os.environ["SRC"], os.environ["DST"]
+repo = json.load(open(src))
+try:
+    live = json.load(open(dst))
+except Exception:
+    live = {}
+for key in os.environ["KEEP"].split():
+    if key in live:
+        repo[key] = live[key]
+with open(dst, "w") as fh:
+    json.dump(repo, fh, indent=2)
+    fh.write("\n")
+PYEOF
+    ok "$f (merged; kept $KEEP_KEYS)"
+    continue
   fi
   run cp "$src" "$dst"
   ok "$f"
@@ -109,7 +132,15 @@ else
     if [ "$DRY" = 1 ]; then
       skip "would add MCP: $name"
     elif claude mcp add-json "$name" "$cfg" -s user >/dev/null 2>&1; then
-      ok "MCP: $name"
+      # add-json exits 0 for a command that cannot be spawned, so probe the transport.
+      # A bare $HOME in a stdio command is posix_spawn'd, never shell-expanded — hence
+      # the ${HOME} form in servers.json.
+      if claude mcp get "$name" 2>&1 | grep -q 'Failed to connect'; then
+        warn "MCP: $name registered but will not start — run: claude mcp get $name"
+        note "MCP: $name does not connect; check its command path in mcp/servers.json"
+      else
+        ok "MCP: $name"
+      fi
     else
       warn "MCP: $name failed (add manually with: claude mcp add-json $name '<json>')"
     fi
@@ -253,6 +284,7 @@ fi
 
 # ------------------------------------------------------------------ 5. memory
 say "5/5  Memory backend (basic-memory)"
+BM_VERSION="0.23.2"
 BM_VAULT="${BASIC_MEMORY_VAULT:-$HOME/Documents/Obsidian Vault/Knowledge}"
 BM_CONFIG_DIR="${BASIC_MEMORY_CONFIG_DIR:-${XDG_CONFIG_HOME:-$HOME/.config}/basic-memory}"
 BM_BIN="$HOME/.local/bin/basic-memory"
@@ -260,35 +292,65 @@ if ! command -v uv >/dev/null 2>&1; then
   warn "uv not found — skipping basic-memory (install uv, then re-run)"
   note "basic-memory: install uv (pacman -S uv), then re-run"
 else
-  run uv tool install basic-memory >/dev/null 2>&1 \
-    && ok "basic-memory installed" \
-    || warn "basic-memory install failed (uv tool install basic-memory)"
+  # Pinned: the guarantee below is one config key, and an unattended upgrade that
+  # renames or drops it would re-enable local embeddings silently.
+  run uv tool install "basic-memory==$BM_VERSION" >/dev/null 2>&1 \
+    && ok "basic-memory $BM_VERSION installed" \
+    || warn "basic-memory install failed (uv tool install basic-memory==$BM_VERSION)"
   run mkdir -p "$BM_VAULT" "$BM_CONFIG_DIR"
+  [ "$DRY" = 1 ] || chmod 700 "$BM_CONFIG_DIR" 2>/dev/null || true
   if [ "$DRY" = 1 ]; then
     skip "would register project 'knowledge' at $BM_VAULT and disable semantic search"
   elif [ -x "$BM_BIN" ]; then
+    # `project add` writes config.json BEFORE the database row. If config already names
+    # the project it raises "already exists" and the row is never created, leaving every
+    # tool call failing with "Project not found". Detect that and repair it.
     "$BM_BIN" project add knowledge "$BM_VAULT" >/dev/null 2>&1 \
       && ok "project: knowledge ($BM_VAULT)" \
-      || skip "project 'knowledge' already registered"
+      || skip "project 'knowledge' already in config — verifying the index"
+
+    bm_project_indexed() { "$BM_BIN" project list 2>/dev/null | grep -q knowledge; }
+    if ! bm_project_indexed; then
+      warn "project 'knowledge' missing from the index — reindexing"
+      "$BM_BIN" reindex >/dev/null 2>&1 || true
+    fi
+    if ! bm_project_indexed; then
+      warn "project 'knowledge' still unusable — repair with: $BM_BIN reset --reindex"
+      note "basic-memory: project 'knowledge' is not indexed; run '$BM_BIN reset --reindex'"
+    else
+      ok "project 'knowledge' indexed"
+    fi
+
+    # Drop the bootstrap project so `project list` matches the documented setup.
+    "$BM_BIN" project remove main >/dev/null 2>&1 || true
+
     # Force text-only retrieval. basic-memory ships fastembed + onnxruntime and turns
     # semantic search on by default, which downloads a local embedding model on first
-    # use. This setup runs on the Claude subscription alone, so keep it off.
+    # use. This setup runs on the Claude subscription alone, so keep it off. The MCP
+    # server block in mcp/servers.json repeats these as env vars, so the guarantee does
+    # not rest on this file alone.
     BM_CONFIG_FILE="$BM_CONFIG_DIR/config.json" python3 - <<'PYEOF'
 import json, os, pathlib
 p = pathlib.Path(os.environ["BM_CONFIG_FILE"])
 cfg = json.loads(p.read_text()) if p.exists() else {}
+cfg.pop("default_project_mode", None)
 cfg.update({
     "default_project": "knowledge",
-    "default_project_mode": True,
     "semantic_search_enabled": False,
     "default_search_type": "text",
     "reranker_enabled": False,
+    "auto_update": False,
 })
+projects = cfg.get("projects")
+if isinstance(projects, dict):
+    cfg["projects"] = {k: v for k, v in projects.items() if k == "knowledge"} or projects
 p.write_text(json.dumps(cfg, indent=2) + "\n")
 p.chmod(0o600)
 PYEOF
-    ok "semantic search off — text search only, no local model"
+    ok "semantic search off, auto-update off — text search only, no local model"
+    chmod 600 "$BM_CONFIG_DIR"/memory.db "$BM_CONFIG_DIR"/*.log 2>/dev/null || true
     note "basic-memory lifecycle hooks ship in config/settings.json (SessionStart + PreCompact)"
+    note "basic-memory: drain the envelope inbox periodically — $BM_BIN hook flush"
   else
     warn "basic-memory binary not at $BM_BIN — configure it manually"
   fi

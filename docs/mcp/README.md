@@ -27,8 +27,12 @@ as `${ENV_VAR}` references that Claude Code expands from your shell at startup.
 ## context7
 - **Transport:** HTTP to `https://mcp.context7.com/mcp`.
 - **Auth:** header `CONTEXT7_API_KEY`, stored as a `${CONTEXT7_API_KEY}` **reference** —
-  Claude Code expands it from the shell environment at startup, so the real key never
-  lands in `~/.claude.json`. Get a key at https://context7.com, put it in `.env`, and
+  Claude Code expands it from the shell environment at startup. The installer never writes
+  the value, but a server added by hand (`claude mcp add` with a literal header) stores it
+  in cleartext and stays that way. Verify with
+  `jq '.mcpServers.context7.headers' ~/.claude.json`: anything other than the
+  `${CONTEXT7_API_KEY}` string means the key is on disk and needs rotating, including in
+  `~/.claude/backups/`. Get a key at https://context7.com, put it in `.env`, and
   **export it in your shell** (e.g. `~/.bashrc`, or `set -a; source .env; set +a`).
 - **Use it for:** current docs for libraries/SDKs/CLIs (React, Next.js, Prisma, Tailwind, etc.) — prefer it over web search for library docs.
 
@@ -51,7 +55,9 @@ not the value).
 
 Local code knowledge graphs over the Intelcia projects under `~/Work`.
 
-- **Command:** `$HOME/.local/bin/graphify-mcp` (from `uv tool install "graphifyy[mcp,…]"`).
+- **Command:** `${HOME}/.local/bin/graphify-mcp` (from `uv tool install "graphifyy[mcp,…]"`).
+  The braces matter: an MCP `command` is spawned directly, not through a shell, so a bare
+  `$HOME` fails with `ENOENT` while `${HOME}` is expanded by Claude Code.
 - **Default graph:** `$HOME/.graphify/global-graph.json` — the cross-project graph built
   by `graphify extract --global`. It is passed as the server's only positional argument,
   so tools answer against it when no `project_path` is given.
@@ -77,7 +83,9 @@ The long-term memory layer: a Markdown knowledge graph of decisions, conventions
 session checkpoints, indexed in SQLite and served over MCP. Code structure is graphify's
 job; this is for everything a person said, decided, or left half-finished.
 
-- **Command:** `$HOME/.local/bin/basic-memory mcp` (from `uv tool install basic-memory`).
+- **Command:** `${HOME}/.local/bin/basic-memory mcp` (from
+  `uv tool install basic-memory==0.23.2`, pinned). The braces are required — see graphify
+  above.
 - **Vault:** `~/Documents/Obsidian Vault/Knowledge`, registered as the project `knowledge`
   and passed to the server as `BASIC_MEMORY_DEFAULT_PROJECT`. The notes are plain Markdown
   with YAML frontmatter, readable and editable in Obsidian without this tool.
@@ -96,9 +104,20 @@ use. This setup runs on the Claude subscription alone, so the installer pins thr
 {
   "semantic_search_enabled": false,
   "default_search_type": "text",
-  "reranker_enabled": false
+  "reranker_enabled": false,
+  "auto_update": false
 }
 ```
+
+`auto_update` defaults to **true**: the server checks PyPI at startup and can replace the
+pinned build mid-session. Since the whole guarantee is the three keys above, an unattended
+upgrade that renames or drops one of them would turn embeddings back on with no visible
+output. Pinned and disabled.
+
+Because a single JSON file is a thin guarantee, `mcp/servers.json` repeats it as
+environment variables on the server itself (`BASIC_MEMORY_SEMANTIC_SEARCH_ENABLED`,
+`BASIC_MEMORY_RERANKER_ENABLED`, `BASIC_MEMORY_DEFAULT_SEARCH_TYPE`), so losing or
+regenerating `config.json` does not silently restore local inference.
 
 Search is then SQLite full-text only. The semantic step is Claude's, reading the results.
 Do not flip these back on without deciding to run a local model.
@@ -138,3 +157,22 @@ basic-memory reindex                          # after editing frontmatter by han
 basic-memory project list
 basic-memory hook status                      # inbox depth, settings, versions
 ```
+
+### Housekeeping
+
+The lifecycle hooks write one small envelope per session start and per compaction into
+`$BM_CONFIG_DIR/inbox`, and nothing drains it automatically. Archive periodically:
+
+```bash
+basic-memory hook flush
+```
+
+`config.json`, `memory.db` and the log hold the whole knowledge index, so the installer
+sets the config directory to `700` and those files to `600`.
+
+### Session capture stores raw prompts
+
+With `captureEvents: true`, the `PreCompact` hook writes session checkpoints — including
+verbatim prompt text — as Markdown in the vault. Anything pasted into a prompt can land
+there. Keep the vault out of git and off any sync target, or set `captureEvents: false` in
+the `basicMemory` block to checkpoint only what is written deliberately.
