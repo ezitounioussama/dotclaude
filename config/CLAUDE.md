@@ -80,6 +80,23 @@ being asked. The gstack table above lists the common ones; these extend it:
 - Recall, continuity, "did we already do this" → search basic-memory first.
 - A decision, a constraint, a gotcha the user states → write it to basic-memory
   in the same turn, without asking.
+- Four skills adapted from obra/superpowers live in `~/.claude/skills` without
+  its session hook; pick them, they never auto-fire. Executing an approved plan
+  of mostly independent tasks → `subagent-driven-development`; test-first work
+  in a project with a test suite → `test-driven-development`; isolating a
+  feature branch → `using-git-worktrees`; authoring or testing a skill →
+  `writing-skills`. Brainstorming, planning, review and shipping stay with gstack.
+- GitLab work on gitlab.intelcia-solutions.com (merge requests, pipelines,
+  issues, branches, API) → `glab`, always as `env -u GITLAB_TOKEN glab …`: the
+  `GITLAB_TOKEN` exported in `~/.bashrc` belongs to another account and returns
+  401 there, while glab's own login lives in the OS keyring. Default host is
+  already set to the Intelcia instance.
+- Reverse engineering — how an app, binary, APK, Electron/JS bundle, .NET
+  assembly, website or capture works without its source → REA: skill
+  `reverse-engineer-anything`, MCP server `rea` (`mcp__rea__*`, 207 tools), CLI
+  `rea` (`rea doctor --json` for readiness, `rea update` to upgrade). No native
+  engine (Ghidra, IDA, Hopper, JADX) is configured yet; static JS/Electron,
+  .NET, web and Go/Rust/WASM inspection work without one.
 
 Skills and MCP tools are loaded on demand. When choosing how to reach a tool,
 prefer a command line for one-off work: a CLI costs nothing until it is called.

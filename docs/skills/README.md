@@ -1,7 +1,7 @@
 # Skills catalog
 
-123 skills catalogued across 7 external packages + 1 vendored skill, plus 18 SEO subagents
-+ 3 Cavecrew subagents. A fresh install of this repo lands 112 of them as top-level entries
+128 skills catalogued across 8 external packages + 5 vendored skills, plus 18 SEO subagents
++ 3 Cavecrew subagents. A fresh install of this repo lands 117 of them as top-level entries
 in `~/.claude/skills` (the rest are nested inside gstack or shipped by a plugin).
 
 **Routing, not typing.** `CLAUDE.md` instructs Claude to invoke these on intent — describe
@@ -18,6 +18,7 @@ force one, but nothing in this setup requires it.
   (no `ollama` extra: community labels are written by the `claude` binary, see
   [docs/mcp](../mcp/README.md#graphify))
 - **omarchy** → symlink to the Omarchy desktop install
+- **REA** → `npm:rea-agents` pinned in `config/mise.toml`, skill from `rea setup`
 - **vendored** → shipped inside this repo (`skills/vendored/`)
 
 ---
@@ -235,6 +236,26 @@ Drop the skill folder (with its `SKILL.md`) into `skills/vendored/<name>/`, comm
 re-run `./install.sh` — it copies each vendored skill into `~/.claude/skills/`.
 
 ---
+
+## superpowers (vendored, adapted)
+
+Four skills adapted from [obra/superpowers](https://github.com/obra/superpowers) v7.0.0
+(MIT, `LICENSE.superpowers` in each folder), installed without the Superpowers session
+hook: they never auto-fire, `CLAUDE.md` routes to them. Brainstorming, planning, review and
+shipping stay with gstack.
+
+| Skill | What it does |
+|---|---|
+| `subagent-driven-development` | Run an approved plan task by task: fresh implementer subagent, task review, fix loop, final whole-branch review, ledger that survives compaction. |
+| `test-driven-development` | Red-green-refactor discipline for work in a project with a test suite. |
+| `using-git-worktrees` | Isolate a feature branch in its own worktree. |
+| `writing-skills` | Author or edit a skill test-first: baseline run without it, then with it. |
+
+## REA (reverse engineering)
+
+| Skill | What it does |
+|---|---|
+| `reverse-engineer-anything` | Explain how a shipped app, binary, APK, Electron/JS bundle, .NET assembly, website or capture works without its source, through the `rea` MCP server and CLI. |
 
 ## Not skills, but routed the same way
 
