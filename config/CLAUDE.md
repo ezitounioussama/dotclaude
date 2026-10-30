@@ -85,6 +85,12 @@ being asked. The gstack table above lists the common ones; these extend it:
   `GITLAB_TOKEN` exported in `~/.bashrc` belongs to another account and returns
   401 there, while glab's own login lives in the OS keyring. Default host is
   already set to the Intelcia instance.
+- Reverse engineering — how an app, binary, APK, Electron/JS bundle, .NET
+  assembly, website or capture works without its source → REA: skill
+  `reverse-engineer-anything`, MCP server `rea` (`mcp__rea__*`, 207 tools), CLI
+  `rea` (`rea doctor --json` for readiness, `rea update` to upgrade). No native
+  engine (Ghidra, IDA, Hopper, JADX) is configured yet; static JS/Electron,
+  .NET, web and Go/Rust/WASM inspection work without one.
 
 Skills and MCP tools are loaded on demand. When choosing how to reach a tool,
 prefer a command line for one-off work: a CLI costs nothing until it is called.

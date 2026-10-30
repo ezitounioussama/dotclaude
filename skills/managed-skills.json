@@ -227,6 +227,16 @@
         "omarchy",
         "diagnose-crash"
       ]
+    },
+    "rea": {
+      "type": "mise-npm",
+      "repo": "https://github.com/morluto/rea",
+      "package": "rea-agents",
+      "version": "6.7.0",
+      "install_hint": "Pinned in config/mise.toml as npm:rea-agents, so it does not depend on the global Node version. Run `rea setup` once to install the reverse-engineer-anything skill; mcp/servers.json registers `rea mcp` through the mise shim (the path rea setup writes points into one Node install and breaks on a Node upgrade). Upgrade with `rea update`, then bump config/mise.toml.",
+      "skills": [
+        "reverse-engineer-anything"
+      ]
     }
   }
 }

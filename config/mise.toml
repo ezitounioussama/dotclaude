@@ -4,6 +4,7 @@ claude = "latest"
 codex = "latest"
 glab = "1.123.0"
 node = "lts"
+"npm:rea-agents" = "6.7.0"
 
 [settings.upgrade]
 auto_prune = false

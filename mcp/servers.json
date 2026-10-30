@@ -43,5 +43,13 @@
       "BASIC_MEMORY_RERANKER_ENABLED": "false",
       "BASIC_MEMORY_DEFAULT_SEARCH_TYPE": "text"
     }
+  },
+  "rea": {
+    "type": "stdio",
+    "command": "${HOME}/.local/share/mise/shims/rea",
+    "args": [
+      "mcp"
+    ],
+    "env": {}
   }
 }

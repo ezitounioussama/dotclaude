@@ -1,7 +1,7 @@
 # Skills catalog
 
-123 skills catalogued across 7 external packages + 1 vendored skill, plus 18 SEO subagents
-+ 3 Cavecrew subagents. A fresh install of this repo lands 112 of them as top-level entries
+124 skills catalogued across 8 external packages + 1 vendored skill, plus 18 SEO subagents
++ 3 Cavecrew subagents. A fresh install of this repo lands 113 of them as top-level entries
 in `~/.claude/skills` (the rest are nested inside gstack or shipped by a plugin).
 
 **Routing, not typing.** `CLAUDE.md` instructs Claude to invoke these on intent — describe
@@ -18,6 +18,7 @@ force one, but nothing in this setup requires it.
   (no `ollama` extra: community labels are written by the `claude` binary, see
   [docs/mcp](../mcp/README.md#graphify))
 - **omarchy** → symlink to the Omarchy desktop install
+- **REA** → `npm:rea-agents` pinned in `config/mise.toml`, skill from `rea setup`
 - **vendored** → shipped inside this repo (`skills/vendored/`)
 
 ---
@@ -235,6 +236,12 @@ Drop the skill folder (with its `SKILL.md`) into `skills/vendored/<name>/`, comm
 re-run `./install.sh` — it copies each vendored skill into `~/.claude/skills/`.
 
 ---
+
+## REA (reverse engineering)
+
+| Skill | What it does |
+|---|---|
+| `reverse-engineer-anything` | Explain how a shipped app, binary, APK, Electron/JS bundle, .NET assembly, website or capture works without its source, through the `rea` MCP server and CLI. |
 
 ## Not skills, but routed the same way
 
