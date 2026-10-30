@@ -119,7 +119,7 @@ if command -v mise >/dev/null 2>&1 && command -v python3 >/dev/null 2>&1; then
     if run mise use -g --quiet "$tool@$ver" >/dev/null 2>&1; then ok "mise: $tool@$ver"; else warn "mise use -g $tool@$ver failed"; fi
   done < <(python3 -c 'import sys, tomllib; [print(f"{k}\t{v}") for k, v in tomllib.load(open(sys.argv[1], "rb"))["tools"].items()]' "$REPO_DIR/config/mise.toml")
 else
-  warn "mise or python3 not found — skipping global tools (bun, glab, node, codex, claude, rea)"
+  warn "mise or python3 not found — skipping global tools (bun, glab, node, codex, claude)"
   note "mise: install it (pacman -S mise), then re-run to pin the global CLI tools"
 fi
 
@@ -294,16 +294,6 @@ else
     warn "claude-seo install failed (network/python?) — install manually:"
     warn "    curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-seo/$SEO_TAG/install.sh | bash"
     note "claude-seo: install manually, then re-run"
-  fi
-
-  # 4h. REA (npm:rea-agents via mise above; its MCP comes from mcp/servers.json, its skill from `rea setup`)
-  if [ -f "$SKILLS_DIR/reverse-engineer-anything/SKILL.md" ]; then
-    ok "REA skill present"
-  elif command -v rea >/dev/null 2>&1; then
-    warn "REA skill missing — run: rea setup   (keep the MCP entry from mcp/servers.json)"
-    note "REA: run 'rea setup' once to install the reverse-engineer-anything skill"
-  else
-    skip "REA not installed (mise use -g npm:rea-agents comes from config/mise.toml)"
   fi
 fi
 

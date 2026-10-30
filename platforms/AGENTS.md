@@ -22,11 +22,6 @@ gpt-taste, image-to-code, imagegen-frontend-web/mobile, redesign-existing-projec
 stitch-design-taste, full-output-enforcement). Prefer them when building or redesigning
 UIs so interfaces don't look templated.
 
-## Reverse engineering
-
-To learn how an app, binary, APK, Electron/JS bundle, .NET assembly or website works
-without its source, use the `rea` MCP server (CLI `rea`; `rea doctor --json` for readiness).
-
 ## Browsing
 
 Prefer a headless/CDP browser for QA and dogfooding over ad-hoc scraping.

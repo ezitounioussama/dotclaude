@@ -7,16 +7,61 @@
       "binary": "gstack",
       "install_hint": "gstack ships its own installer and manages ~/.claude/skills/gstack + all gstack skill symlinks. Once the `gstack` binary is present, its skills self-register. The installer turns on auto_upgrade (gstack-config set auto_upgrade true) so gstack upgrades itself at session start.",
       "skills": [
-        "autoplan","benchmark","benchmark-models","browse","canary","careful","codex",
-        "connect-chrome","context-restore","context-save","cso","design-consultation",
-        "design-html","design-review","design-shotgun","devex-review","diagram",
-        "document-generate","document-release","freeze","_gstack-command","gstack-upgrade",
-        "guard","health","investigate","ios-clean","ios-design-review","ios-fix","ios-qa",
-        "ios-sync","land-and-deploy","landing-report","learn","make-pdf","office-hours",
-        "open-gstack-browser","pair-agent","plan-ceo-review","plan-design-review",
-        "plan-devex-review","plan-eng-review","plan-tune","qa","qa-only","retro","review",
-        "scrape","setup-browser-cookies","setup-deploy","setup-gbrain","ship","skillify",
-        "spec","sync-gbrain","unfreeze"
+        "autoplan",
+        "benchmark",
+        "benchmark-models",
+        "browse",
+        "canary",
+        "careful",
+        "codex",
+        "connect-chrome",
+        "context-restore",
+        "context-save",
+        "cso",
+        "design-consultation",
+        "design-html",
+        "design-review",
+        "design-shotgun",
+        "devex-review",
+        "diagram",
+        "document-generate",
+        "document-release",
+        "freeze",
+        "_gstack-command",
+        "gstack-upgrade",
+        "guard",
+        "health",
+        "investigate",
+        "ios-clean",
+        "ios-design-review",
+        "ios-fix",
+        "ios-qa",
+        "ios-sync",
+        "land-and-deploy",
+        "landing-report",
+        "learn",
+        "make-pdf",
+        "office-hours",
+        "open-gstack-browser",
+        "pair-agent",
+        "plan-ceo-review",
+        "plan-design-review",
+        "plan-devex-review",
+        "plan-eng-review",
+        "plan-tune",
+        "qa",
+        "qa-only",
+        "retro",
+        "review",
+        "scrape",
+        "setup-browser-cookies",
+        "setup-deploy",
+        "setup-gbrain",
+        "ship",
+        "skillify",
+        "spec",
+        "sync-gbrain",
+        "unfreeze"
       ]
     },
     "taste-skill": {
@@ -45,8 +90,14 @@
       "source_dir": "~/.agents/skills",
       "install_hint": "Clerk agent skills live in ~/.agents/skills and are installed via Clerk's agent toolkit (e.g. `npx @clerk/agent-toolkit@latest install` or the clerk CLI). Each installed name is symlinked from ~/.claude/skills/<name> -> ../../.agents/skills/<name>.",
       "skills": [
-        "clerk-backend-api","clerk-custom-ui","clerk-nextjs-patterns","clerk-orgs",
-        "clerk-react-patterns","clerk-setup","clerk-testing","clerk-webhooks"
+        "clerk-backend-api",
+        "clerk-custom-ui",
+        "clerk-nextjs-patterns",
+        "clerk-orgs",
+        "clerk-react-patterns",
+        "clerk-setup",
+        "clerk-testing",
+        "clerk-webhooks"
       ]
     },
     "claude-seo": {
@@ -56,20 +107,67 @@
       "installer": "curl -fsSL https://raw.githubusercontent.com/AgriciDaniel/claude-seo/v2.2.0/install.sh | bash",
       "install_hint": "Runs claude-seo's own installer, which copies 31 skills into ~/.claude/skills, 18 subagents into ~/.claude/agents, and builds a Python venv at ~/.claude/skills/seo/.venv. Pin the tag with CLAUDE_SEO_TAG=<tag>. Needs python3 >= 3.10 + git. All 8 extensions install by default; each extension's own API keys are configured separately (none are stored in this repo).",
       "skills": [
-        "seo","seo-audit","seo-backlinks","seo-cluster","seo-competitor-pages","seo-content",
-        "seo-content-brief","seo-dataforseo","seo-drift","seo-ecommerce","seo-flow","seo-geo",
-        "seo-google","seo-hreflang","seo-image-gen","seo-images","seo-local","seo-maps",
-        "seo-page","seo-plan","seo-programmatic","seo-schema","seo-sitemap","seo-sxo",
+        "seo",
+        "seo-audit",
+        "seo-backlinks",
+        "seo-cluster",
+        "seo-competitor-pages",
+        "seo-content",
+        "seo-content-brief",
+        "seo-dataforseo",
+        "seo-drift",
+        "seo-ecommerce",
+        "seo-flow",
+        "seo-geo",
+        "seo-google",
+        "seo-hreflang",
+        "seo-image-gen",
+        "seo-images",
+        "seo-local",
+        "seo-maps",
+        "seo-page",
+        "seo-plan",
+        "seo-programmatic",
+        "seo-schema",
+        "seo-sitemap",
+        "seo-sxo",
         "seo-technical",
-        "seo-ahrefs","seo-bing","seo-firecrawl","seo-profound","seo-seranking","seo-unlighthouse"
+        "seo-ahrefs",
+        "seo-bing",
+        "seo-firecrawl",
+        "seo-profound",
+        "seo-seranking",
+        "seo-unlighthouse"
       ],
       "extensions": [
-        "ahrefs","banana","bing-webmaster","dataforseo","firecrawl","profound","seranking","unlighthouse"
+        "ahrefs",
+        "banana",
+        "bing-webmaster",
+        "dataforseo",
+        "firecrawl",
+        "profound",
+        "seranking",
+        "unlighthouse"
       ],
       "agents": [
-        "seo-backlinks","seo-cluster","seo-content","seo-dataforseo","seo-drift","seo-ecommerce",
-        "seo-flow","seo-geo","seo-google","seo-image-gen","seo-local","seo-maps","seo-performance",
-        "seo-schema","seo-sitemap","seo-sxo","seo-technical","seo-visual"
+        "seo-backlinks",
+        "seo-cluster",
+        "seo-content",
+        "seo-dataforseo",
+        "seo-drift",
+        "seo-ecommerce",
+        "seo-flow",
+        "seo-geo",
+        "seo-google",
+        "seo-image-gen",
+        "seo-local",
+        "seo-maps",
+        "seo-performance",
+        "seo-schema",
+        "seo-sitemap",
+        "seo-sxo",
+        "seo-technical",
+        "seo-visual"
       ]
     },
     "caveman": {
@@ -79,21 +177,43 @@
       "plugin": "caveman@caveman",
       "install_hint": "Official Claude Code path: `claude plugin marketplace add JuliusBrussee/caveman && claude plugin install caveman@caveman`. Do NOT use the upstream curl|bash installer — it rewrites Claude Code hooks and the statusline, which would clobber statusline-command.sh. All 20 skills and 3 agents ship inside the plugin, namespaced `caveman:<skill>`, so they never appear in ~/.claude/skills. The plugin also registers its own SessionStart hook, which is what keeps the compressed reply style active across sessions. skills/ upstream is MIT; the Caveman Engine/proxy is BSL-1.1 and is not installed by this path.",
       "skills": [
-        "caveman", "caveman-setup", "caveman-init", "caveman-manage", "caveman-help",
-        "caveman-compress", "caveman-stats", "caveman-optimize", "caveman-learn",
-        "caveman-discover", "caveman-explore", "caveman-review", "caveman-evidence-review",
-        "caveman-commit", "cavecrew", "investigate-first", "lean-build", "surgical-patch",
-        "safe-refactor", "migration", "verify-and-stop"
+        "caveman",
+        "caveman-setup",
+        "caveman-init",
+        "caveman-manage",
+        "caveman-help",
+        "caveman-compress",
+        "caveman-stats",
+        "caveman-optimize",
+        "caveman-learn",
+        "caveman-discover",
+        "caveman-explore",
+        "caveman-review",
+        "caveman-evidence-review",
+        "caveman-commit",
+        "cavecrew",
+        "investigate-first",
+        "lean-build",
+        "surgical-patch",
+        "safe-refactor",
+        "migration",
+        "verify-and-stop"
       ],
-      "agents": ["cavecrew-builder", "cavecrew-investigator", "cavecrew-reviewer"]
+      "agents": [
+        "cavecrew-builder",
+        "cavecrew-investigator",
+        "cavecrew-reviewer"
+      ]
     },
     "graphify": {
       "type": "pypi-cli",
       "package": "graphifyy[mcp,sql,watch]",
       "repo": "https://github.com/Graphify-Labs/graphify.git",
-      "install_hint": "uv tool install \"graphifyy[mcp,sql,watch]\" then `graphify install --platform claude` (writes ~/.claude/skills/graphify + a section in ~/.claude/CLAUDE.md). NOTE: the global installer does NOT register hooks \u2014 only `--project` does \u2014 so the PreToolUse hook-guard entries in config/settings.json are maintained here instead, which keeps them global without writing CLAUDE.md/.claude into every work repo. The sql extra is required or .sql files index as empty; watch enables `graphify watch` for auto-rebuild.",
-      "skills": ["graphify"],
-      "mcp": "graphify (see mcp/servers.json) \u2014 started with no default graph it runs as a pure multi-project server; every tool takes project_path.",
+      "install_hint": "uv tool install \"graphifyy[mcp,sql,watch]\" then `graphify install --platform claude` (writes ~/.claude/skills/graphify + a section in ~/.claude/CLAUDE.md). NOTE: the global installer does NOT register hooks — only `--project` does — so the PreToolUse hook-guard entries in config/settings.json are maintained here instead, which keeps them global without writing CLAUDE.md/.claude into every work repo. The sql extra is required or .sql files index as empty; watch enables `graphify watch` for auto-rebuild.",
+      "skills": [
+        "graphify"
+      ],
+      "mcp": "graphify (see mcp/servers.json) — started with no default graph it runs as a pure multi-project server; every tool takes project_path.",
       "indexed_projects": "17 Intelcia repos under ~/Work (GitLab intelcia-solutions + Azure DevOps PdpParagon/PDP). Each has graphify-out/ added to .git/info/exclude so it never shows in git status. Vendor-heavy repos carry a .graphifyignore."
     },
     "omarchy": {
@@ -103,15 +223,10 @@
         "omarchy": "~/.local/share/omarchy/default/agents/skills/omarchy",
         "diagnose-crash": "~/.local/share/omarchy/default/agents/skills/diagnose-crash"
       },
-      "skills": ["omarchy", "diagnose-crash"]
-    },
-    "rea": {
-      "type": "mise-npm",
-      "repo": "https://github.com/morluto/rea",
-      "package": "rea-agents",
-      "version": "6.7.0",
-      "install_hint": "Pinned in config/mise.toml as npm:rea-agents, so it does not depend on the global Node version. Run `rea setup` once to install the reverse-engineer-anything skill; mcp/servers.json registers `rea mcp` through the mise shim (the path rea setup writes points into one Node install and breaks on a Node upgrade). Upgrade with `rea update`, then bump config/mise.toml.",
-      "skills": ["reverse-engineer-anything"]
+      "skills": [
+        "omarchy",
+        "diagnose-crash"
+      ]
     }
   }
 }

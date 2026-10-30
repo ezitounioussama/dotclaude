@@ -18,7 +18,7 @@ That's it. Restart your AI tool(s) and everything is in place.
 
 | Platform | MCP servers | Instructions | Skills |
 |---|---|---|---|
-| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (117) + 21 subagents |
+| Claude Code | ✅ | ✅ CLAUDE.md | ✅ (112) + 21 subagents |
 | opencode | ✅ | ✅ AGENTS.md | ✅ (shared taste-skills) |
 | Codex CLI | ✅ | ✅ AGENTS.md | — |
 | Gemini CLI | ✅ | ✅ GEMINI.md | — |
@@ -39,10 +39,10 @@ dotclaude/
 │   ├── settings.local.json    #   local permission allowlist
 │   └── statusline-command.sh  #   custom status line
 ├── mcp/
-│   └── servers.json           # 6 MCP servers (secrets as ${ENV_VARS})
+│   └── servers.json           # 5 MCP servers (secrets as ${ENV_VARS})
 ├── plugins/                   # marketplace + installed-plugin manifests
 ├── skills/
-│   ├── vendored/              # skills shipped in-repo (clerk-cli + 4 adapted superpowers skills)
+│   ├── vendored/              # hand-written skills shipped in-repo (clerk-cli)
 │   └── managed-skills.json    # external skill packages + how to reinstall them
 ├── platforms/                 # multi-platform support (opencode, Codex, Gemini)
 │   ├── AGENTS.md             #   shared cross-platform instructions
@@ -51,7 +51,7 @@ dotclaude/
 │   └── install-platform.py    # renders/merges MCP + instructions per platform
 └── docs/
     ├── mcp/README.md          # instructions for every MCP server
-    └── skills/README.md       # catalog + instructions for all 128 skills
+    └── skills/README.md       # catalog + instructions for all 123 skills
 ```
 
 ## What the installer does
@@ -61,8 +61,8 @@ dotclaude/
    copied: the repo's keys win, and the machine-generated ones Claude Code owns
    (`autoMode`, `modelSettings`, `model`, the notification flags) are grafted back from
    the live file so a re-run does not wipe them.
-2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, `graphify`,
-   `basic-memory`, and `rea` at user scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}`
+2. **MCP** — registers `chrome-devtools`, `magicui`, `context7`, `graphify`, and
+   `basic-memory` at user scope with `claude mcp add-json`, keeping secrets as `${ENV_VAR}`
    references.
 3. **Plugins** — adds the `claude-plugins-official` marketplace and installs the `vercel`
    plugin (also declared in `settings.json`, so it auto-installs on launch).
@@ -129,14 +129,13 @@ always up to date. Full list and per-skill instructions: **[docs/skills](docs/sk
 | caveman | `github.com/JuliusBrussee/caveman` (Claude Code plugin) | 21 (+ 3 Cavecrew subagents) |
 | graphify | `graphifyy` on PyPI (CLI + skill + MCP) | 1 |
 | omarchy | Omarchy desktop install | 2 |
-| REA | `rea-agents` on npm, pinned with mise | 1 (`reverse-engineer-anything`) |
-| vendored | this repo | 5 (`clerk-cli` + 4 adapted from obra/superpowers) |
+| vendored | this repo | 1 (`clerk-cli`) |
 
 `~/.claude/agents/` isn't tracked here either — every subagent on this setup comes from
 `claude-seo`, so its installer recreates them.
 
 The counts above are what each source ships; [docs/skills](docs/skills/README.md) is the
-source of truth and documents 128 of them one by one.
+source of truth and documents 123 of them one by one.
 
 ## Secrets
 

@@ -1,6 +1,6 @@
 # MCP servers
 
-Six MCP servers are configured (see [`../../mcp/servers.json`](../../mcp/servers.json)).
+Five MCP servers are configured (see [`../../mcp/servers.json`](../../mcp/servers.json)).
 The installer registers them at **user scope** with `claude mcp add-json`, keeping secrets
 as `${ENV_VAR}` references that Claude Code expands from your shell at startup.
 
@@ -11,7 +11,6 @@ as `${ENV_VAR}` references that Claude Code expands from your shell at startup.
 | `context7` | http | `CONTEXT7_API_KEY` | Fetch up-to-date library/framework/API documentation on demand. |
 | `graphify` | stdio | — | Query local code knowledge graphs (nodes, neighbors, paths, god nodes, PR impact). |
 | `basic-memory` | stdio | — | Read and write the Markdown knowledge graph of decisions, conventions, and session checkpoints. |
-| `rea` | stdio | — | Reverse engineering of local artifacts, binaries, bundles, pages and runtimes (REA, ~207 tools, deferred). |
 
 ---
 
@@ -177,15 +176,3 @@ With `captureEvents: true`, the `PreCompact` hook writes session checkpoints —
 verbatim prompt text — as Markdown in the vault. Anything pasted into a prompt can land
 there. Keep the vault out of git and off any sync target, or set `captureEvents: false` in
 the `basicMemory` block to checkpoint only what is written deliberately.
-
-## rea
-
-[REA](https://github.com/morluto/rea) (`rea-agents` on npm) analyses shipped artifacts —
-native binaries, managed code, Electron/JS bundles, web pages, captures — and returns
-Evidence for each claim. The CLI is pinned in `config/mise.toml` as `npm:rea-agents`, so it
-lives outside any one Node install. `servers.json` starts it through the mise shim
-(`${HOME}/.local/share/mise/shims/rea mcp`): the entry that `rea setup` writes points into a
-specific Node version's `bin/` and stops working after a Node upgrade. `rea doctor --json`
-reports which providers are ready; no native engine (Ghidra, IDA, Hopper, JADX) is needed for
-static JS/Electron, .NET, web or Go/Rust/WASM work.
-
